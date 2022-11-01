@@ -1,0 +1,94 @@
+@model Contracts.Database.Dog
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_Layout";
+}
+
+<h1>Create</h1>
+
+<h4>Dog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Breed" class="control-label"></label>
+                <input asp-for="Breed" class="form-control" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Size" class="control-label"></label>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="About" class="control-label"></label>
+                <input asp-for="About" class="form-control" />
+                <span asp-validation-for="About" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Row" class="control-label"></label>
+                <input asp-for="Row" class="form-control" />
+                <span asp-validation-for="Row" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Enclosure" class="control-label"></label>
+                <input asp-for="Enclosure" class="form-control" />
+                <span asp-validation-for="Enclosure" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="form-group-image">
+                <label asp-for="TitlePhoto" class="control-label"></label><br>
+                <input type="file" name="file" id="file-input" class="form-control-file" />
+                <input type="file" name="croppedImage" id="cropped-image" class="form-control-file"/>
+                <span asp-validation-for="TitlePhoto" class="text-danger"></span>                
+            </div>
+            <div id="image-handler">
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Upload title image
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
