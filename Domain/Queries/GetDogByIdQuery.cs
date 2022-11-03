@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 using Contracts.Database;
 using Domain.Database;
-using BitmapNet;
-using System.Drawing;
 
 namespace Domain.Queries;
 

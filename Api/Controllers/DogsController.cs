@@ -13,6 +13,9 @@ using Domain.Commands;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore;
+using System.Collections.Generic;
+using System.Net.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Api.Controllers;
 
@@ -20,11 +23,13 @@ public class DogsController : Controller
 {
     private readonly ILogger<DogsController> _logger;
     private readonly IMediator _mediator;
+    private readonly IWebHostEnvironment _environment;
 
-    public DogsController(ILogger<DogsController> logger, IMediator mediator)
+    public DogsController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
     {
         _logger = logger;
         _mediator = mediator;
+        _environment = environment;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
@@ -41,13 +46,13 @@ public class DogsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] Dog dog, IFormFile croppedImage, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Create([FromForm] Dog dog, IFormFile croppedImage, List<IFormFile> allPhotos, CancellationToken cancellationToken = default)
     {
         if (!ModelState.IsValid)
         {
             return View(dog);
         }
-        
+
         var command = new AddDogCommand
         {
             Name = dog.Name,
@@ -58,17 +63,44 @@ public class DogsController : Controller
             Row = dog.Row,
             Enclosure = dog.Enclosure
         };
-        
+
         var response = await _mediator.Send(command, cancellationToken);
 
+        // AddTitlePhoto
         if (croppedImage != null)
-        {   
-            Directory.CreateDirectory($"wwwroot/images/{response.Dog.Id}");
-            using (var fileStream = new FileStream($"wwwroot/{response.Dog.TitlePhoto}", FileMode.Create))
+        {
+            using (var titlePhotoStream = croppedImage.OpenReadStream())
             {
-                croppedImage.CopyTo(fileStream);
+                var addTitlePhotoCommand = new AddTitlePhotoCommand
+                {
+                    DogId = response.Dog.Id,
+                    TitlePhotoStream = titlePhotoStream,
+                    RootPath = _environment.WebRootPath
+                };
+
+                await _mediator.Send(addTitlePhotoCommand, cancellationToken);
             }
         }
+
+        // AddOthersPhotos
+        if (allPhotos != null)
+        {
+            foreach (var photo in allPhotos)
+            {
+                using (var photoStream = photo.OpenReadStream())
+                {
+                    var addPhotoCommand = new AddPhotoCommand
+                    {
+                        DogId = response.Dog.Id,
+                        PhotoStream = photoStream,
+                        RootPath = _environment.WebRootPath
+                    };
+
+                    await _mediator.Send(addPhotoCommand, cancellationToken);
+                }
+            }
+        }
+        
         
         return RedirectToAction(nameof(Index));
     }

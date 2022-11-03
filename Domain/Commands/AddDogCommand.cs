@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Contracts.Database;
@@ -16,6 +17,8 @@ public class AddDogCommand : IRequest<AddDogCommandResult>
     public string About { get; init; }
     public int Row { get; init; }
     public int Enclosure { get; init; }
+    public Stream TitlePhotoStream { get; init; }
+    public string RootPath { get; init; }
 }
 
 public class AddDogCommandResult
@@ -45,12 +48,12 @@ internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogComma
 
             LastUpdate = DateTime.UtcNow
         };
-
+        
         await _dbContext.AddAsync(dog, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        dog.TitlePhoto = $"/images/{dog.Id}/Title.jpg";
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        Directory.CreateDirectory($"{request.RootPath}\\wwwroot\\images\\{dog.Id}");            
 
         return new AddDogCommandResult
         {

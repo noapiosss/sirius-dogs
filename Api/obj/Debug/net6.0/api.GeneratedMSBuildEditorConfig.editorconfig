@@ -8,57 +8,57 @@ build_property.PlatformNeutralAssembly =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = api
 build_property.RootNamespace = api
-build_property.ProjectDir = C:\Users\Lenovo\Desktop\Doges\api\
+build_property.ProjectDir = c:\Users\Lenovo\Desktop\Doges\Api\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Lenovo\Desktop\Doges\api
+build_property.MSBuildProjectDirectory = c:\Users\Lenovo\Desktop\Doges\Api
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Dogs/Create.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Dogs/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9nc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Dogs/Delete.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Dogs/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9nc1xEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Dogs/Details.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Dogs/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9nc1xEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Dogs/Edit.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Dogs/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9nc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Dogs/Index.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Dogs/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9nc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Home/Index.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Home/Privacy.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Shared/Error.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Shared/_ValidationScriptsPartial.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/_ViewImports.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/_ViewStart.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Lenovo/Desktop/Doges/api/Views/Shared/_Layout.cshtml]
+[c:/Users/Lenovo/Desktop/Doges/Api/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-52h41k007f

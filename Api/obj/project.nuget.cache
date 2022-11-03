@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bJbdLF8M5pqUSflCLOEDi7op8HOdMsnJn9p1dfcsFVZmKld/2hjDvmfNl6lXBkajBj9cjwlJqlUV09riPQ++bw==",
+  "dgSpecHash": "zfvExsoZ6N3UHVpAw9RYtqyXpUVv18X3h3eSebwYyqMe3/IQZekKGN0NMAxpDboTkkumuXW0X1j+lhoFueM+Qg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lenovo\\Desktop\\Doges\\api\\api.csproj",
+  "projectFilePath": "C:\\Users\\Lenovo\\Desktop\\Doges\\Api\\api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lenovo\\.nuget\\packages\\bitmap.net\\1.0.1\\bitmap.net.1.0.1.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",

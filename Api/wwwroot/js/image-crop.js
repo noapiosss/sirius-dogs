@@ -1,14 +1,7 @@
 import Cropper from "./cropper/cropper.esm.js";
 
-const myModal = document.getElementById('myModal')
-const myInput = document.getElementById('myInput')
-
-myModal.addEventListener('shown.bs.modal', () => {
-  myInput.focus()
-})
-
-
-const fileInput = document.getElementById("file-input");
+const titlePhotoInput = document.getElementById("title-photo-input");
+const allPhotos = document.getElementById("all-photos");
 
 const imgPreview = document.createElement("img");
 imgPreview.className = "input-image";
@@ -22,14 +15,21 @@ let croppedPhotoInput = document.getElementById("cropped-image");
 
 let cropper = "";
 
-fileInput.onchange = () =>
-{    
-    getImgData();
+allPhotos.onchange = () =>
+{
+    for (const photo of allPhotos.files)
+    {
+        const photoData = document.createElement("label");
+        photoData.className = `about-${photo.name}`;
+        photoData.innerHTML = `${photo.name} ${photo.size/1000}b`;
+        document.getElementById("all-photos-labels").appendChild(photoData);
+        document.getElementById("all-photos-labels").appendChild(document.createElement("br"));
+    };
 }
 
-function getImgData() 
+titlePhotoInput.onchange = function getImgData() 
 {
-    const file = fileInput.files[0];
+    const file = titlePhotoInput.files[0];
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
     fileReader.addEventListener("load", function () {
@@ -42,22 +42,17 @@ function getImgData()
                 minContainerHeight: imgPreview.height,
                 viewModer: 1,
                 center: false,
-                zoomOnWheel: false,
                 zoomOnTouch: false,
-                rotatable: false,
                 scalable: false,
-                zoomable: false,
-                crop: async function(event) {
+                crop: function(event) {
                     let imgSrc = this.cropper.getCroppedCanvas().toDataURL("image/jpeg");
                     imgCropped.src = imgSrc;
                 }
             });
         }, 500);
         
-        const applyBtn = document.createElement("button");
-        applyBtn.innerHTML = "Apply";
-        applyBtn.type = "button";
-        document.getElementById("image-handler").appendChild(applyBtn);
+        const applyBtn = document.getElementById("submit-cropped-image");
+
         applyBtn.onclick = async () =>
         {            
             let croppedPhotoFile = await fetch(imgCropped.src)
@@ -67,13 +62,8 @@ function getImgData()
                 });
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(croppedPhotoFile);
-
             croppedPhotoInput.files = dataTransfer.files;
-            document.querySelector("#image-handler > div").remove();
-            applyBtn.remove();
+            document.getElementById("staticBackdrop").hide();
         }
-
-    });
-      
+    });      
 }
-
