@@ -34,13 +34,13 @@ internal class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, GetDogB
     }
     public async Task<GetDogByIdQueryResult> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
     {
-        var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-        var dogPhotosPath = await _dbContext.Images.Where(i => i.DogId == request.DogId).Select(i => i.PhotoPath).ToListAsync(cancellationToken);
+        var dog = await _dbContext.Doges
+            .Include(d => d.Photos)
+            .FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
         return new GetDogByIdQueryResult
         {
-            Dog = dog,
-            PhotosPath = dogPhotosPath
+            Dog = dog
         };
     }
 }

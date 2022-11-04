@@ -17,6 +17,40 @@ body {
   margin-bottom: 60px;
 }
 
-.dog-title-img{
+.dog-title-img {
   width: 200px;
+}
+
+.carousel .carousel-item {
+  height: 400px;
+  width: 400px;
+  background-color: black;
+}
+
+.carousel-inner {
+  width: 100%;
+}
+
+.carousel-item {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  position: relative;
+}
+
+.carousel-img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.photos-cell {
+  width: 400px;
 }

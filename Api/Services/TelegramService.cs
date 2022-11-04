@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -68,6 +69,50 @@ public class TelegramService : ITelegramService
                         photo: new InputOnlineFile(content: stream, fileName: "Title photo"),
                         caption: message);
                 }
+                return;
+            }
+
+            if (update.Message.Text.Contains("/GetDogById"))
+            {
+                var dogId = Int32.Parse(update.Message.Text.Split(" ", 2)[1]);
+                var query = new GetDogByIdQuery{DogId = dogId};
+                var response = await _mediator.Send(query, cancellationToken);
+                var dog = response.Dog;
+                
+                var message = $"Name: {dog.Name}\n" + 
+                    $"Breed: {dog.Breed}\n" +
+                    $"Size: {dog.Size}\n" +
+                    $"Age: {dog.Age}\n" +
+                    $"About: {dog.About}\n" +
+                    $"Row: {dog.Row}\n" +
+                    $"Enclosure: {dog.Enclosure}\n" +
+                    $"Last update: {dog.LastUpdate}";
+
+
+                List<Stream> streamList = new List<Stream>();
+                streamList.Add(System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}"));
+                foreach (var photo in dog.Photos)
+                {
+                    streamList.Add(System.IO.File.OpenRead($"./wwwroot{photo.PhotoPath}"));
+                }
+
+                List<InputMediaPhoto> media = new List<InputMediaPhoto>();
+
+                foreach (var stream in streamList)
+                {
+                    media.Add(new InputMediaPhoto(new InputMedia(stream, stream.GetHashCode().ToString())));
+                }
+                
+                await _telegramBotClient.SendMediaGroupAsync(chatId,
+                    media: media,
+                    cancellationToken: cancellationToken);
+                await _telegramBotClient.SendTextMessageAsync(chatId, message, cancellationToken: cancellationToken);
+
+                foreach(var stream in streamList)
+                {
+                    stream.Close();
+                }
+
                 return;
             }
         }

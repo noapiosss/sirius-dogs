@@ -37,7 +37,7 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
     {
         if (!await _dbContext.Images.AnyAsync(i => i.DogId == request.DogId, cancellationToken))
         {
-            using (var fileStream = new FileStream($"{request.RootPath}\\wwwroot\\images\\{request.DogId}\\1.jpg", FileMode.Create))
+            using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\1.jpg", FileMode.Create))
             {
                 request.PhotoStream.Seek(0, SeekOrigin.Begin);
                 request.PhotoStream.CopyTo(fileStream);
@@ -65,7 +65,7 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
             .Split('/').Last()
             .Split('.').First();
         
-        using (var fileStream = new FileStream($"{request.RootPath}\\wwwroot\\images\\{request.DogId}\\{Int64.Parse(lastPhotoIndex)+1}.jpg", FileMode.Create))
+        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\{Int64.Parse(lastPhotoIndex)+1}.jpg", FileMode.Create))
         {
             request.PhotoStream.Seek(0, SeekOrigin.Begin);
             request.PhotoStream.CopyTo(fileStream);

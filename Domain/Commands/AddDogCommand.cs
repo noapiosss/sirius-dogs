@@ -17,7 +17,6 @@ public class AddDogCommand : IRequest<AddDogCommandResult>
     public string About { get; init; }
     public int Row { get; init; }
     public int Enclosure { get; init; }
-    public Stream TitlePhotoStream { get; init; }
     public string RootPath { get; init; }
 }
 
@@ -51,9 +50,8 @@ internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogComma
         
         await _dbContext.AddAsync(dog, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
-
         
-        Directory.CreateDirectory($"{request.RootPath}\\wwwroot\\images\\{dog.Id}");            
+        Directory.CreateDirectory($"{request.RootPath}\\images\\{dog.Id}");            
 
         return new AddDogCommandResult
         {

@@ -34,7 +34,7 @@ internal class AddTitlePhotoCommandHandler : IRequestHandler<AddTitlePhotoComman
         dog.TitlePhoto = $"/images/{request.DogId}/Title.jpg";
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        using (var fileStream = new FileStream($"{request.RootPath}\\wwwroot\\images\\{request.DogId}\\Title.jpg", FileMode.Create))
+        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\Title.jpg", FileMode.Create))
         {
             request.TitlePhotoStream.Seek(0, SeekOrigin.Begin);
             request.TitlePhotoStream.CopyTo(fileStream);

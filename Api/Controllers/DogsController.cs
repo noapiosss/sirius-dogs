@@ -53,6 +53,8 @@ public class DogsController : Controller
             return View(dog);
         }
 
+        var path = _environment.WebRootPath;
+
         var command = new AddDogCommand
         {
             Name = dog.Name,
@@ -61,7 +63,8 @@ public class DogsController : Controller
             Age = dog.Age,
             About = dog.About,
             Row = dog.Row,
-            Enclosure = dog.Enclosure
+            Enclosure = dog.Enclosure,
+            RootPath = path
         };
 
         var response = await _mediator.Send(command, cancellationToken);
@@ -75,7 +78,7 @@ public class DogsController : Controller
                 {
                     DogId = response.Dog.Id,
                     TitlePhotoStream = titlePhotoStream,
-                    RootPath = _environment.WebRootPath
+                    RootPath = path
                 };
 
                 await _mediator.Send(addTitlePhotoCommand, cancellationToken);
@@ -93,7 +96,7 @@ public class DogsController : Controller
                     {
                         DogId = response.Dog.Id,
                         PhotoStream = photoStream,
-                        RootPath = _environment.WebRootPath
+                        RootPath = path
                     };
 
                     await _mediator.Send(addPhotoCommand, cancellationToken);
