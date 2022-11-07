@@ -16,7 +16,7 @@
         <input type="submit" value="Search" class="search-request-btn btn btn-primary" />
     </div>
 </form>
-<table class="table">
+<table class="dog-table">
     @* <thead>
         <tr>
             <th>
@@ -40,21 +40,31 @@
     {
         @:<tr>
     }
-        <td>
-            @{string imagePath = $"/images/{Model[i].Id}/Title.jpg";}
-            <img class="dog-title-img" src=@imagePath> <br>
-            <b>Name:</b> @Model[i].Name <br>
-            @{int age = 0;}
-            @if (DateTime.Now.DayOfYear > Model[i].BirthDate.ToLocalTime().DayOfYear)
-            {
-                age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year;
-            }
-            else
-            {
-                age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year - 1;
-            }
-            <b>Age:</b> @age <br>
-            @Model[i].About <br>
+        <td class="dog-td">            
+            <div class="title-wrapper">
+                @{string imagePath = $"/images/{Model[i].Id}/Title.jpg";}
+                <img class="dog-title-img" src=@imagePath>
+            </div>
+            <div class="details-wrapper">
+                <div class="name-wrapper">
+                    <b>Name:</b> @Model[i].Name
+                </div>
+                <div class="age-wrappper">
+                    @{int age = 0;}
+                    @if (DateTime.Now.DayOfYear > Model[i].BirthDate.ToLocalTime().DayOfYear)
+                    {
+                        age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year;
+                    }
+                    else
+                    {
+                        age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year - 1;
+                    }
+                    <b>Age:</b> @age
+                </div>
+            </div>
+            <div class="about-wrapper">
+                @Model[i].About
+            </div>
             @Html.ActionLink("Edit", "Edit", new { id = Model[i].Id }) |
             @Html.ActionLink("Details", "Details", new { id = Model[i].Id }) |
             @Html.ActionLink("Delete", "Delete", new { id = Model[i].Id })

@@ -18,7 +18,7 @@ body {
 }
 
 .dog-title-img {
-  width: 200px;
+  width: 250px;
 }
 
 .carousel .carousel-item {
@@ -65,4 +65,30 @@ body {
 
 .search-request-btn {
   
+}
+
+.dog-table {
+  width: 100%;
+  column-width: 25%;
+}
+
+.dog-td {
+  width: 25%; 
+}
+
+.details-wrapper{
+  width: 250px;
+  display: inline-block;
+}
+
+.name-wrapper{
+  float: left;
+}
+
+.age-wrappper{
+  float: right;
+}
+
+.about-wrapper{
+  max-width: 250px;
 }
