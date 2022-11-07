@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Domain.Migrations
 {
     [DbContext(typeof(DogesDbContext))]
-    [Migration("20221025150512_Init")]
+    [Migration("20221107140809_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,9 +37,9 @@ namespace Domain.Migrations
                         .HasColumnType("text")
                         .HasColumnName("about");
 
-                    b.Property<int>("Age")
-                        .HasColumnType("integer")
-                        .HasColumnName("age");
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("birth_date");
 
                     b.Property<string>("Breed")
                         .HasColumnType("text")
@@ -89,21 +89,6 @@ namespace Domain.Migrations
                     b.ToTable("tbl_images", "public");
                 });
 
-            modelBuilder.Entity("Contracts.Database.Tag", b =>
-                {
-                    b.Property<int>("DogId")
-                        .HasColumnType("integer")
-                        .HasColumnName("dog_id");
-
-                    b.Property<string>("TagName")
-                        .HasColumnType("text")
-                        .HasColumnName("tag");
-
-                    b.HasKey("DogId", "TagName");
-
-                    b.ToTable("tbl_tags", "public");
-                });
-
             modelBuilder.Entity("Contracts.Database.Image", b =>
                 {
                     b.HasOne("Contracts.Database.Dog", "Dog")
@@ -115,22 +100,9 @@ namespace Domain.Migrations
                     b.Navigation("Dog");
                 });
 
-            modelBuilder.Entity("Contracts.Database.Tag", b =>
-                {
-                    b.HasOne("Contracts.Database.Dog", "Dog")
-                        .WithMany("Tags")
-                        .HasForeignKey("DogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dog");
-                });
-
             modelBuilder.Entity("Contracts.Database.Dog", b =>
                 {
                     b.Navigation("Photos");
-
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

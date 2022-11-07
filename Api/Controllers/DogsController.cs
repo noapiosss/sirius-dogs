@@ -40,6 +40,15 @@ public class DogsController : Controller
         return View(result.Dogs);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Index([FromForm] string searchRequest, CancellationToken cancellationToken = default)
+    {
+        var query = new SearchGodQuery{SearchRequest = searchRequest};
+        var result = await _mediator.Send(query, cancellationToken);
+        
+        return View(result.Dogs);
+    }
+
     public IActionResult Create()
     {
         return View();
@@ -60,7 +69,7 @@ public class DogsController : Controller
             Name = dog.Name,
             Breed = dog.Breed,
             Size = dog.Size,
-            Age = dog.Age,
+            BirthDate = dog.BirthDate,
             About = dog.About,
             Row = dog.Row,
             Enclosure = dog.Enclosure,
@@ -109,7 +118,7 @@ public class DogsController : Controller
     }
     
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
-    {
+    {  
         var query = new GetDogByIdQuery{DogId = id};
         var result = await _mediator.Send(query, cancellationToken);
         return View(result.Dog);
@@ -119,7 +128,11 @@ public class DogsController : Controller
     [ActionName("Delete")]
     public async Task<IActionResult> DeleteDog(int id, CancellationToken cancellationToken = default)
     {
-        var command = new DeleteDogCommand{DogId = id};
+        var command = new DeleteDogCommand
+        {
+            DogId = id,
+            RootPath = _environment.WebRootPath
+        };
         var result = await _mediator.Send(command, cancellationToken);
         return RedirectToAction(nameof(Index));
     }
@@ -150,6 +163,7 @@ public class DogsController : Controller
     {
         var query = new GetDogByIdQuery{DogId = id};
         var result = await _mediator.Send(query, cancellationToken);
+        result.Dog.BirthDate = result.Dog.BirthDate.ToLocalTime();
         return View(result.Dog);
     }    
 

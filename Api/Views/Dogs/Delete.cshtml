@@ -37,10 +37,10 @@
             @Html.DisplayFor(model => model.Size)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Age)
+            @Html.DisplayNameFor(model => model.BirthDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Age)
+            @Model.BirthDate.ToLocalTime().Day/@Model.BirthDate.ToLocalTime().Month/@Model.BirthDate.ToLocalTime().Year;
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.About)

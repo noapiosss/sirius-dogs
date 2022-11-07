@@ -20,7 +20,6 @@ public class GetDogByIdQuery : IRequest<GetDogByIdQueryResult>
 public class GetDogByIdQueryResult
 {
     public Dog Dog { get; init; }
-    public ICollection<string> PhotosPath { get; init; } 
 }
 
 internal class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, GetDogByIdQueryResult>

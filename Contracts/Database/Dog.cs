@@ -22,8 +22,8 @@ public class Dog
     [Column("size")]
     public string Size { get; set; }
 
-    [Column("age")]
-    public int Age { get; set; }
+    [Column("birth_date")]
+    public DateTime BirthDate { get; set; }
 
     [Column("about")]
     public string About { get; set; }
@@ -39,7 +39,6 @@ public class Dog
 
     [Column("last_update")]
     public DateTime LastUpdate { get; set; }
-    public ICollection<Tag> Tags { get; set; }
     public ICollection<Image> Photos { get; set; } 
 
 }

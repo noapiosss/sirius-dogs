@@ -17,13 +17,15 @@ let cropper = "";
 
 allPhotos.onchange = () =>
 {
+    const allPhotosLabels = document.getElementById("all-photos-labels");
+    allPhotosLabels.replaceChildren();
     for (const photo of allPhotos.files)
-    {
+    {        
         const photoData = document.createElement("label");
         photoData.className = `about-${photo.name}`;
         photoData.innerHTML = `${photo.name} ${photo.size/1000}b`;
-        document.getElementById("all-photos-labels").appendChild(photoData);
-        document.getElementById("all-photos-labels").appendChild(document.createElement("br"));
+        allPhotosLabels.appendChild(photoData);
+        allPhotosLabels.appendChild(document.createElement("br"));
     };
 }
 

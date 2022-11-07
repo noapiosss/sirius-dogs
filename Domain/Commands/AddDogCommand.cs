@@ -13,7 +13,7 @@ public class AddDogCommand : IRequest<AddDogCommandResult>
     public string Name { get; init; }
     public string Breed { get; init; }
     public string Size { get; init; }
-    public int Age { get; init; }
+    public DateTime BirthDate { get; init; }
     public string About { get; init; }
     public int Row { get; init; }
     public int Enclosure { get; init; }
@@ -35,12 +35,14 @@ internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogComma
     }
     public async Task<AddDogCommandResult> Handle(AddDogCommand request, CancellationToken cancellationToken = default)
     {
+        var birthDate = request.BirthDate;
+        birthDate = birthDate.AddHours(12);
         var dog = new Dog
         {
             Name = request.Name,
             Breed = request.Breed,
             Size = request.Size,
-            Age = request.Age,
+            BirthDate = birthDate.ToUniversalTime(),
             About = request.About,
             Row = request.Row,
             Enclosure = request.Enclosure,

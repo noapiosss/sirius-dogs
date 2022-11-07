@@ -35,9 +35,18 @@ internal class EditDogCommandHandler : IRequestHandler<EditDogCommand, EditDogCo
                 EditingIsSuccessful = false
             };
         }
+        
+        var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.Dog.Id, cancellationToken);
+        dog.Name = request.Dog.Name;
+        dog.Breed = request.Dog.Breed;
+        dog.Size = request.Dog.Size;
+        dog.BirthDate = request.Dog.BirthDate.ToUniversalTime();
+        dog.About = request.Dog.About;
+        dog.Row = request.Dog.Row;
+        dog.Enclosure = request.Dog.Enclosure;
+        dog.LastUpdate = DateTime.UtcNow;
 
-        request.Dog.LastUpdate = DateTime.UtcNow;
-        _dbContext.Doges.Update(request.Dog);
+        _dbContext.Doges.Update(dog);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new EditDogCommandResult

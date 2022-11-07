@@ -7,7 +7,6 @@ public class DogesDbContext : DbContext
 {
     public DbSet<Dog> Doges { get; init; } 
     public DbSet<Image> Images { get; init; }
-    public DbSet<Tag> Tags { get; init; }
 
     public DogesDbContext() : base()
     {
@@ -24,12 +23,6 @@ public class DogesDbContext : DbContext
             .HasOne(i => i.Dog)
             .WithMany(d => d.Photos)
             .HasForeignKey(i => i.DogId);
-
-        modelBuilder.Entity<Tag>().HasKey(nameof(Tag.DogId), nameof(Tag.TagName));
-        modelBuilder.Entity<Tag>()
-            .HasOne(t => t.Dog)
-            .WithMany(d => d.Tags)
-            .HasForeignKey(t => t.DogId);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

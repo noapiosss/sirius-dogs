@@ -8,8 +8,14 @@
 <h1>Dogs</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add new dog</a>
 </p>
+<form asp-action="Index">
+    <div class="search-from form-group">
+        <input name="searchRequest" class="search-request form-control" />
+        <input type="submit" value="Search" class="search-request-btn btn btn-primary" />
+    </div>
+</form>
 <table class="table">
     @* <thead>
         <tr>
@@ -38,7 +44,16 @@
             @{string imagePath = $"/images/{Model[i].Id}/Title.jpg";}
             <img class="dog-title-img" src=@imagePath> <br>
             <b>Name:</b> @Model[i].Name <br>
-            <b>Age:</b> @Model[i].Age <br>
+            @{int age = 0;}
+            @if (DateTime.Now.DayOfYear > Model[i].BirthDate.ToLocalTime().DayOfYear)
+            {
+                age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year;
+            }
+            else
+            {
+                age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year - 1;
+            }
+            <b>Age:</b> @age <br>
             @Model[i].About <br>
             @Html.ActionLink("Edit", "Edit", new { id = Model[i].Id }) |
             @Html.ActionLink("Details", "Details", new { id = Model[i].Id }) |
