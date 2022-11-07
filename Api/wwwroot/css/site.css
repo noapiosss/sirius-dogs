@@ -17,10 +17,6 @@ body {
   margin-bottom: 60px;
 }
 
-.dog-title-img {
-  width: 250px;
-}
-
 .carousel .carousel-item {
   height: 400px;
   width: 400px;
@@ -67,28 +63,58 @@ body {
   
 }
 
-.dog-table {
+.dogs-container {
   width: 100%;
-  column-width: 25%;
 }
 
-.dog-td {
+.col {
   width: 25%; 
 }
 
-.details-wrapper{
-  width: 250px;
+.row {
+  padding-top: 10px;
+}
+
+.title-container {
+  width: 100%;
+}
+
+.dog-title-img {
+  width: 100%;
+}
+
+.details-container{
+  width: 100%;
   display: inline-block;
 }
 
-.name-wrapper{
+.name-container{
   float: left;
 }
 
-.age-wrappper{
+.age-container{
   float: right;
 }
 
-.about-wrapper{
-  max-width: 250px;
+.about-container{
+  text-align: justify;
+  max-width: 100%;
+}
+
+.about-container:after{
+  content: "";
+  display: inline;
+  width: 100%;
+}
+
+.references-container{
+  padding-top: 10px;
+  text-align: justify;
+  width: 100%;
+}
+
+.references-container:after{
+  content: "";
+  display: inline-block;
+  width: 100%;
 }
