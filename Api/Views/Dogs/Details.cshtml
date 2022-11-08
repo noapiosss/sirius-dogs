@@ -87,13 +87,16 @@
                         @Html.DisplayNameFor(model => model.BirthDate)
                     </dt>
                     <dd class = "col-sm-10">
-                        @Model.BirthDate.ToLocalTime().Day/@Model.BirthDate.ToLocalTime().Month/@Model.BirthDate.ToLocalTime().Year;
+                        @Model.BirthDate.ToLocalTime().Day/@Model.BirthDate.ToLocalTime().Month/@Model.BirthDate.ToLocalTime().Year
                     </dd>
                     <dt class = "col-sm-2">
                         @Html.DisplayNameFor(model => model.About)
                     </dt>
                     <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.About)
+                        @foreach (var line in Model.About.Split("\r\n"))
+                        {
+                            @line <br>
+                        }
                     </dd>
                     <dt class = "col-sm-2">
                         @Html.DisplayNameFor(model => model.Row)

@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Signin";
+    Layout = "_Layout";
+}
+
+<form asp-action="Signin">
+    <h2>Enter password first!</h2>
+    <input type="text" name="password" class="form-control" placeholder="Password" aria-label="Last name" style="width: 25%;">
+    <div class="form-group">
+        <input type="submit" value="Sign-in" class="btn btn-primary" />
+    </div>
+</form>

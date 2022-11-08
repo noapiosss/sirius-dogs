@@ -51,6 +51,11 @@ body {
   width: 400px;
 }
 
+.about-textarea {
+  overflow-y: hidden;
+  resize: none;
+}
+
 .search-from{
   display: flex;
 }

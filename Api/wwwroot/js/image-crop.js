@@ -1,7 +1,17 @@
 import Cropper from "./cropper/cropper.esm.js";
 
+const aboutTextarea = document.getElementById("about-textarea");
+aboutTextarea.style.height = 0;
+aboutTextarea.style.height = (aboutTextarea.scrollHeight) + "px";
+
+aboutTextarea.oninput = () =>
+{
+    aboutTextarea.style.height = 0;
+    aboutTextarea.style.height = (aboutTextarea.scrollHeight) + "px";
+}
+
 const titlePhotoInput = document.getElementById("title-photo-input");
-const allPhotos = document.getElementById("all-photos");
+const allPhotos = document.getElementById("all-photos-input");
 
 const imgPreview = document.createElement("img");
 imgPreview.className = "input-image";
@@ -27,6 +37,12 @@ allPhotos.onchange = () =>
         allPhotosLabels.appendChild(photoData);
         allPhotosLabels.appendChild(document.createElement("br"));
     };
+}
+
+document.getElementById("submit-all-photos").onclick = () =>
+{
+    document.getElementById("all-photos").files = allPhotos.files;
+    document.getElementById("close-all-photos-modal").click();
 }
 
 titlePhotoInput.onchange = function getImgData() 
@@ -65,7 +81,7 @@ titlePhotoInput.onchange = function getImgData()
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(croppedPhotoFile);
             croppedPhotoInput.files = dataTransfer.files;
-            document.getElementById("staticBackdrop").hide();
+            document.getElementById("close-cropped-image-modal").click();
         }
     });      
 }

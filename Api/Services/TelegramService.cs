@@ -21,7 +21,6 @@ public class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _telegramBotClient;
     private readonly IMediator _mediator;
-    private readonly string _baseURL = "https://c319-176-119-235-147.eu.ngrok.io ";
 
     public TelegramService(ITelegramBotClient telegramBotClient, IMediator mediator)
     {

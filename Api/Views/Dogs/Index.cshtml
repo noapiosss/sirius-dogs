@@ -55,7 +55,10 @@
             </div>
 
             <div class="about-container">
-                @Model[i].About
+                @foreach (var line in Model[i].About.Split("\r\n"))
+                {
+                    @line <br>
+                }
             </div>
 
             <div class="references-container">
