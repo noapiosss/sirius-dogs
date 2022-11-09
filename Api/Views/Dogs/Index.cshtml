@@ -5,6 +5,8 @@
     Layout = "_Layout";
 }
 
+@inherits Helper<TModel>
+
 <h1>Dogs</h1>
 
 <p>
@@ -40,16 +42,8 @@
                 </div>
 
                 <div class="age-container">
-                    @{int age = 0;}
-                    @if (DateTime.Now.DayOfYear > Model[i].BirthDate.ToLocalTime().DayOfYear)
-                    {
-                        age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year;
-                    }
-                    else
-                    {
-                        age = DateTime.Now.Year - Model[i].BirthDate.ToLocalTime().Year - 1;
-                    }
-                    <b>Age:</b> @age
+                    
+                    <b>Age:</b> @GetAge(Model[i].BirthDate)
                 </div>
 
             </div>
