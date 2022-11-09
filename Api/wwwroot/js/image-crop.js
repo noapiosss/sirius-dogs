@@ -13,14 +13,6 @@ aboutTextarea.oninput = () =>
 const titlePhotoInput = document.getElementById("title-photo-input");
 const allPhotos = document.getElementById("all-photos-input");
 
-const imgPreview = document.createElement("img");
-imgPreview.className = "input-image";
-const imgCropped = document.createElement("img");
-imgCropped.className = "cropped-image";
-
-document.getElementById("image-handler").appendChild(imgPreview);
-document.getElementById("image-handler").appendChild(imgCropped);
-
 let croppedPhotoInput = document.getElementById("cropped-image");
 
 let cropper = "";
@@ -47,6 +39,16 @@ document.getElementById("submit-all-photos").onclick = () =>
 
 titlePhotoInput.onchange = function getImgData() 
 {
+    document.getElementById("image-handler").replaceChildren();
+
+    const imgPreview = document.createElement("img");
+    imgPreview.className = "input-image";
+    const imgCropped = document.createElement("img");
+    imgCropped.className = "cropped-image";
+
+    document.getElementById("image-handler").appendChild(imgPreview);
+    document.getElementById("image-handler").appendChild(imgCropped);
+
     const file = titlePhotoInput.files[0];
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);

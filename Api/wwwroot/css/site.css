@@ -17,6 +17,19 @@ body {
   margin-bottom: 60px;
 }
 
+.input-image {
+  display: block;
+  max-width: 100%;
+}
+
+.cropped-image {  
+  max-width: 50%;
+}
+
+.image-handler {
+  width: 100%;
+}
+
 .carousel .carousel-item {
   height: 400px;
   width: 400px;

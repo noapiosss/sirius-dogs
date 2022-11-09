@@ -32,7 +32,7 @@ internal class GetAllDogsQueryHandler : IRequestHandler<GetAllDogsQuery, GetAllD
     }
     public async Task<GetAllDogsQueryResult> Handle(GetAllDogsQuery request, CancellationToken cancellationToken)
     {
-        var allDogs = await _dbContext.Doges.OrderBy(d => d.Id).ToListAsync(cancellationToken);
+        var allDogs = await _dbContext.Doges.OrderByDescending(d => d.Id).ToListAsync(cancellationToken);
 
         return new GetAllDogsQueryResult
         {
