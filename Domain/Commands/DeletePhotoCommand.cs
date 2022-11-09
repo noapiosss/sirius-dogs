@@ -17,6 +17,7 @@ public class DeletePhotoCommand : IRequest<DeletePhotoCommandResult>
 {
     public int DogId { get; init; }
     public string PhotoPath { get; init; }
+    public string RootPath { get; init; }
 }
 
 public class DeletePhotoCommandResult
@@ -44,6 +45,8 @@ internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, D
         _dbContext.Remove(photo);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
+        File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/","\\")}");
+        
         return new DeletePhotoCommandResult
         {
             PhotoIsDeleted = true
