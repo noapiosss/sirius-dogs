@@ -29,7 +29,7 @@ public class SessionController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Signin([FromForm] string password, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Signin([FromForm] string username, string password, CancellationToken cancellationToken = default)
     {
         if (password == "")
         {
@@ -55,7 +55,7 @@ public class SessionController : Controller
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, "volunteer")
+                new Claim(ClaimTypes.Name, username)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -11,6 +11,7 @@ namespace Domain.Commands;
 public class EditDogCommand : IRequest<EditDogCommandResult>
 {
     public Dog Dog { get; init; }
+    public string UpdatedBy { get; init; }
 }
 
 public class EditDogCommandResult
@@ -45,6 +46,7 @@ internal class EditDogCommandHandler : IRequestHandler<EditDogCommand, EditDogCo
         dog.Row = request.Dog.Row;
         dog.Enclosure = request.Dog.Enclosure;
         dog.LastUpdate = DateTime.UtcNow;
+        dog.UpdatedBy = request.UpdatedBy;
 
         _dbContext.Doges.Update(dog);
         await _dbContext.SaveChangesAsync(cancellationToken);

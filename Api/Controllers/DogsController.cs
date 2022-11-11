@@ -81,7 +81,8 @@ public class DogsController : Controller
             About = dog.About,
             Row = dog.Row,
             Enclosure = dog.Enclosure,
-            RootPath = _environment.WebRootPath
+            RootPath = _environment.WebRootPath,
+            UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
         };
 
         var response = await _mediator.Send(command, cancellationToken);
@@ -95,7 +96,8 @@ public class DogsController : Controller
                 {
                     DogId = response.Dog.Id,
                     TitlePhotoStream = titlePhotoStream,
-                    RootPath = _environment.WebRootPath
+                    RootPath = _environment.WebRootPath,
+                    UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
                 await _mediator.Send(addTitlePhotoCommand, cancellationToken);
@@ -113,7 +115,8 @@ public class DogsController : Controller
                     {
                         DogId = response.Dog.Id,
                         PhotoStream = photoStream,
-                        RootPath = _environment.WebRootPath
+                        RootPath = _environment.WebRootPath,
+                        UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                     };
 
                     await _mediator.Send(addPhotoCommand, cancellationToken);
@@ -187,7 +190,8 @@ public class DogsController : Controller
                 {
                     DogId = id,
                     TitlePhotoStream = titlePhotoStream,
-                    RootPath = _environment.WebRootPath
+                    RootPath = _environment.WebRootPath,
+                    UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
                 await _mediator.Send(addTitlePhotoCommand, cancellationToken);
@@ -205,7 +209,8 @@ public class DogsController : Controller
                     {
                         DogId = id,
                         PhotoStream = photoStream,
-                        RootPath = _environment.WebRootPath
+                        RootPath = _environment.WebRootPath,
+                        UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                     };
 
                     await _mediator.Send(addPhotoCommand, cancellationToken);

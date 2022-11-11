@@ -50,7 +50,8 @@ public class PhotoController : BaseController
             {
                 DogId = dogId,
                 PhotoStream = photoStream,
-                RootPath = _environment.WebRootPath
+                RootPath = _environment.WebRootPath,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 
             var result = await _mediator.Send(addPhotoCommand, cancellationToken);
@@ -75,7 +76,8 @@ public class PhotoController : BaseController
         {
             DogId = request.DogId,
             PhotoPath = request.PhotoPath,
-            RootPath = _environment.WebRootPath
+            RootPath = _environment.WebRootPath,
+            UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
         };
         
         await _mediator.Send(query, cancellationToken);

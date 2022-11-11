@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 using Domain.Database;
 using System.IO;
+using System;
 
 public class AddTitlePhotoCommand : IRequest<AddTitlePhotoCommandResult>
 {
     public int DogId { get; init; }
     public Stream TitlePhotoStream { get; init; }
     public string RootPath { get; init; }
+    public string UpdatedBy { get; init; }
 }
 
 public class AddTitlePhotoCommandResult
@@ -44,6 +46,12 @@ internal class AddTitlePhotoCommandHandler : IRequestHandler<AddTitlePhotoComman
             request.TitlePhotoStream.Seek(0, SeekOrigin.Begin);
             request.TitlePhotoStream.CopyTo(fileStream);
         }
+        
+        dog.LastUpdate = DateTime.UtcNow;
+        dog.UpdatedBy = request.UpdatedBy;
+
+        _dbContext.Doges.Update(dog);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new AddTitlePhotoCommandResult
         {

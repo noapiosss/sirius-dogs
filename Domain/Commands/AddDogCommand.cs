@@ -18,6 +18,7 @@ public class AddDogCommand : IRequest<AddDogCommandResult>
     public int Row { get; init; }
     public int Enclosure { get; init; }
     public string RootPath { get; init; }
+    public string UpdatedBy { get; init; }
 }
 
 public class AddDogCommandResult
@@ -47,7 +48,8 @@ internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogComma
             Row = request.Row,
             Enclosure = request.Enclosure,
 
-            LastUpdate = DateTime.UtcNow
+            LastUpdate = DateTime.UtcNow,
+            UpdatedBy = request.UpdatedBy
         };
         
         await _dbContext.AddAsync(dog, cancellationToken);
