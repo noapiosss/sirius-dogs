@@ -60,6 +60,9 @@ document.getElementById("submit-all-photos").onclick = async () =>
         newDeleteBtn.innerHTML = "[ delete ]";
         newDeleteBtn.onclick = async () => 
         {
+            const delIsSubmited = confirm("Are you sure, that you wanna delete this photo?");
+            if (!delIsSubmited) return;
+
             const photoForDelete = 
             {
                 dogId: dogId,
