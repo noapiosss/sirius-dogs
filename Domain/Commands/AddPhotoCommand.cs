@@ -22,7 +22,7 @@ public class AddPhotoCommand : IRequest<AddPhotoCommandResult>
 
 public class AddPhotoCommandResult
 {
-    public bool PhotoIsAdded { get; init; }
+    public string PhotoPath { get; init; }
 }
 
 internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhotoCommandResult>
@@ -54,18 +54,28 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
 
             return new AddPhotoCommandResult
             {
-                PhotoIsAdded = true
+                PhotoPath = firstImage.PhotoPath
             };
         }
 
-        var lastPhotoIndex = (await _dbContext.Images
+        var photoPaths = (await _dbContext.Images
             .Where(i => i.DogId == request.DogId)
             .Select(i => i.PhotoPath)
-            .MaxAsync(cancellationToken))
-            .Split('/').Last()
-            .Split('.').First();
+            .ToListAsync(cancellationToken));
+
+        int lastPhotoIndex = 0;
+        for (int i = 0; i < photoPaths.Count; ++i)
+        {
+            int photoIndex = Int32.Parse(photoPaths[i].Split('/').Last().Split('.').First());
+            if (lastPhotoIndex < photoIndex)
+            {
+                lastPhotoIndex = photoIndex;
+            }            
+        }
+
+                   
         
-        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\{Int64.Parse(lastPhotoIndex)+1}.jpg", FileMode.Create))
+        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\{lastPhotoIndex+1}.jpg", FileMode.Create))
         {
             request.PhotoStream.Seek(0, SeekOrigin.Begin);
             request.PhotoStream.CopyTo(fileStream);
@@ -75,7 +85,7 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
         var image = new Image
         {
             DogId = request.DogId,
-            PhotoPath = $"/images/{request.DogId}/{Int64.Parse(lastPhotoIndex)+1}.jpg"
+            PhotoPath = $"/images/{request.DogId}/{lastPhotoIndex+1}.jpg"
         };
 
         await _dbContext.AddAsync(image, cancellationToken);
@@ -83,7 +93,7 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
 
         return new AddPhotoCommandResult
         {
-            PhotoIsAdded = true
+            PhotoPath = image.PhotoPath
         };
     }
 }

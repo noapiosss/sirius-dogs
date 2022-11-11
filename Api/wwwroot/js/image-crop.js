@@ -15,8 +15,6 @@ const allPhotos = document.getElementById("all-photos-input");
 
 let croppedPhotoInput = document.getElementById("cropped-image");
 
-let cropper = "";
-
 allPhotos.onchange = () =>
 {
     const allPhotosLabels = document.getElementById("all-photos-labels");
@@ -31,15 +29,70 @@ allPhotos.onchange = () =>
     };
 }
 
-document.getElementById("submit-all-photos").onclick = () =>
+document.getElementById("submit-all-photos").onclick = async () =>
 {
     document.getElementById("all-photos").files = allPhotos.files;
+    
+    for (const photo of allPhotos.files)
+    {
+        const dogId = window.location.href.split('/')[window.location.href.split('/').length - 1];
+        let dataToSend = new FormData();
+        dataToSend.append("dogId", dogId);
+        dataToSend.append("photo", photo);
+
+        const newPhotoPath = await fetch(`${window.location.origin}/api/photos`,{
+            method: 'POST',
+            body: dataToSend
+        }).then(response => response.json()).then(result => result.photoPath);
+
+        console.log(newPhotoPath);
+
+        const newPhotoContainer = document.createElement("div");
+        newPhotoContainer.className = "photo-container";
+
+        const newPhoto = document.createElement("img");
+        newPhoto.className = "dog-photo-img";
+        newPhoto.src = newPhotoPath;
+        newPhotoContainer.appendChild(newPhoto);
+
+        const newDeleteBtn = document.createElement("div");
+        newDeleteBtn.className = "delete-photo-btn";
+        newDeleteBtn.innerHTML = "[ delete ]";
+        newDeleteBtn.onclick = async () => 
+        {
+            const photoForDelete = 
+            {
+                dogId: dogId,
+                photoPath: newPhotoPath
+            };
+            await fetch(`${window.location.origin}/api/photos`,{
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(photoForDelete)
+            });
+            newDeleteBtn.parentElement.remove();
+        }
+
+        const newPhotoControlContainer = document.createElement("div");
+        newPhotoControlContainer.className = "photo-control-container";
+
+        newPhotoControlContainer.appendChild(newPhotoContainer);
+        newPhotoControlContainer.appendChild(newDeleteBtn);
+
+        const addPhotoControlContainer = document.getElementById("add-photo-control-container");
+        addPhotoControlContainer.parentNode.insertBefore(newPhotoControlContainer, addPhotoControlContainer);
+    };
+
     document.getElementById("close-all-photos-modal").click();
 }
 
 titlePhotoInput.onchange = function getImgData() 
 {
     document.getElementById("image-handler").replaceChildren();
+    let cropper = "";
 
     const imgPreview = document.createElement("img");
     imgPreview.className = "input-image";
@@ -87,3 +140,42 @@ titlePhotoInput.onchange = function getImgData()
         }
     });      
 }
+
+const allDeleteBtns = document.querySelectorAll("[id='delete-photo-btn']");
+
+allDeleteBtns.forEach(btn => {
+    btn.onclick = async () =>
+    {
+        const delIsSubmited = confirm("Are you sure, that you wanna delete this photo?");
+        if (!delIsSubmited) return;
+
+        const photoForDelete = 
+        {
+            dogId: `${btn.dataset.dogId}`,
+            photoPath: `${btn.dataset.photoPath}`
+        };
+        await fetch(`${window.location.origin}/api/photos`,{
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(photoForDelete)
+        });
+        btn.parentElement.remove();
+    }
+});
+
+
+
+const addPhotoButton = document.getElementById("add-photo-container");
+
+addPhotoButton.addEventListener("mouseenter", () => {
+    document.getElementById("add-photo-svg").setAttribute("fill", "black");
+    document.getElementById("add-photo-container").style.borderColor = "black";
+});
+
+addPhotoButton.addEventListener("mouseleave", () => {
+    document.getElementById("add-photo-svg").setAttribute("fill", "gray");
+    document.getElementById("add-photo-container").style.borderColor = "rgb(194, 194, 194)";
+});

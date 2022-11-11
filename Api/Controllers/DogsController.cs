@@ -233,25 +233,5 @@ public class DogsController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> DeletePhoto(int dogId, string photoPath, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-
-        var query = new DeletePhotoCommand
-        {
-            DogId = dogId,
-            PhotoPath = photoPath,
-            RootPath = _environment.WebRootPath
-        };
-        
-        await _mediator.Send(query, cancellationToken);
-        
-        return Ok();
-    }    
+    } 
 }

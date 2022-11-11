@@ -138,9 +138,28 @@ body {
 }
 
 /* edit page */
+.images{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.photo-control-container{
+  width: 20%;
+  margin-right: 5%;
+  margin-bottom: 10px;
+}
+
+.add-photo-container:hover{
+  cursor: pointer;
+}
+
+.add-dog-photo-img{
+}
+
 .photo-container{
-  border: 1px black;
-  background-color: black;
+  border: solid 1px rgb(194, 194, 194);
+  width: 100%;
   height: 200px;
   display: flex;
   align-items: center;
@@ -150,4 +169,10 @@ body {
 .dog-photo-img{
   max-height: 100%;
   max-width: 100%;
+}
+
+.delete-photo-btn:hover{
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
 }

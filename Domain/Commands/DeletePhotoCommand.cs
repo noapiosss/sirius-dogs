@@ -35,15 +35,10 @@ internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, D
     }
     public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
     {
-        var photo = new Image
-        {
-            DogId = request.DogId,
-            PhotoPath = request.PhotoPath
-        };
-
-        _dbContext.Attach(photo);
+        var photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
+        
         _dbContext.Remove(photo);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        _dbContext.SaveChanges();
 
         File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/","\\")}");
         
