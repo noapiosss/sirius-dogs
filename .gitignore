@@ -38,3 +38,4 @@ msbuild.wrn
 
 # Local files from testing
 Api/wwwroot/images/*
+Api/appsettings.Development.json
