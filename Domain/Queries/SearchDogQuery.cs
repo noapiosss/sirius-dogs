@@ -33,17 +33,15 @@ internal class SearchGodQueryHandler : IRequestHandler<SearchGodQuery, SearchGod
     }
     public async Task<SearchGodQueryResult> Handle(SearchGodQuery request, CancellationToken cancellationToken)
     {
-        var keyWords = request.SearchRequest.Split(' ').ToList();
+        var keyWords = request.SearchRequest.Split(" ").ToList();
 
-        var allDogs = await _dbContext.Doges
+        var dogs = await _dbContext.Doges
+            .Where(d => EF.Functions.Like(d.Name, $"%{request.SearchRequest}%") ||
+                EF.Functions.Like(d.Breed, $"%{request.SearchRequest}%") ||
+                EF.Functions.Like(d.Size, $"%{request.SearchRequest}%") || 
+                EF.Functions.Like(d.About, $"%{request.SearchRequest}%"))
             .Include(d => d.Photos)
-            .ToListAsync();
-        var dogs = allDogs
-            .Where(d => request.SearchRequest.Contains(d.Name, System.StringComparison.OrdinalIgnoreCase) ||
-                request.SearchRequest.Contains(d.Breed, System.StringComparison.OrdinalIgnoreCase) ||
-                request.SearchRequest.Contains(d.Size, System.StringComparison.OrdinalIgnoreCase) ||
-                d.About.Split(' ').Any(a => request.SearchRequest.Contains(a, System.StringComparison.OrdinalIgnoreCase)))
-            .ToList();
+            .ToListAsync(cancellationToken);
 
         return new SearchGodQueryResult
         {
