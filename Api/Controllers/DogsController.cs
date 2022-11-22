@@ -42,9 +42,15 @@ public class DogsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromForm] string searchRequest, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index([FromForm] string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
     {
-        var query = new SearchGodQuery{SearchRequest = searchRequest};
+        var query = new SearchGodQuery
+        {
+            SearchRequest = searchRequest,
+            MaxAge = filterAge,
+            Row = filterRow,
+            Enclosure = filterEnclosure
+        };
         var result = await _mediator.Send(query, cancellationToken);
         
         return View(result.Dogs);

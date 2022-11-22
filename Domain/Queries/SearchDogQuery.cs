@@ -15,6 +15,9 @@ namespace Domain.Queries;
 public class SearchGodQuery : IRequest<SearchGodQueryResult>
 {
     public string SearchRequest { get; init; }
+    public int MaxAge { get; init; }
+    public int Row { get; init; }
+    public int Enclosure { get; init; }
 }
 
 public class SearchGodQueryResult
@@ -33,14 +36,14 @@ internal class SearchGodQueryHandler : IRequestHandler<SearchGodQuery, SearchGod
     }
     public async Task<SearchGodQueryResult> Handle(SearchGodQuery request, CancellationToken cancellationToken)
     {
-        var keyWords = request.SearchRequest.Split(" ").ToList();
-
+        var searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
         var dogs = await _dbContext.Doges
-            .Where(d => EF.Functions.Like(d.Name, $"%{request.SearchRequest}%") ||
-                EF.Functions.Like(d.Breed, $"%{request.SearchRequest}%") ||
-                EF.Functions.Like(d.Size, $"%{request.SearchRequest}%") || 
-                EF.Functions.Like(d.About, $"%{request.SearchRequest}%"))
+            .Where(d => EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
+                EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
+                EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") || 
+                EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%"))
             .Include(d => d.Photos)
+            .OrderByDescending(d => d.Id)
             .ToListAsync(cancellationToken);
 
         return new SearchGodQueryResult

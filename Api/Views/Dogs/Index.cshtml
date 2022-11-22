@@ -12,11 +12,35 @@
 <p>
     <a asp-action="Create">Add new dog</a>
 </p>
+
 <form asp-action="Index">
-    <div class="search-from form-group">
-        <input name="searchRequest" class="search-request form-control" />
-        <input type="submit" value="Search" class="search-request-btn btn btn-primary" />
+    
+    <div class="search-from form-group" id="search-form">
+        <input name="searchRequest" type="search" class="form-control search-request" id="search-request" />
+        <input type="submit" value="Search" class="btn btn-primary search-request-btn" id="search-request-btn" />
     </div>
+
+    <p class="show-filters-button" id="show-filters-button">show filters</p>
+    <div class="search-filters" id="search-filters" hidden>
+        <div class="filter-age">
+            Age
+            <br>
+            <input name="filterAge" id="age-slider" class="multi-range age-slider" type="range" />
+            <br>
+            <label id="selected-age"></label>
+        </div>
+        <div class="filter-row">
+            Row
+            <br>
+            <input name="filterRow" id="row-filter" class="row-filter" type="number" />
+        </div>
+        <div class="filter-enclosure">
+            Enclosure
+            <br>
+            <input name="filterEnclosure" id="encosure-filter" class="encosure-filter" type="number" />
+        </div>
+    </div>
+
 </form>
 
 <div class="dogs-container">
@@ -29,36 +53,36 @@
     @if (i < Model.Count)
     {
         <div class="col"> 
+            <div class="card">
 
-            <div class="title-container">
                 @{string imagePath = $"/images/{Model[i].Id}/Title.jpg";}
-                <img class="dog-title-img" src=@imagePath>
-            </div>
+                <a href="/Dogs/Details/@Model[i].Id">
+                    <img  src=@imagePath class="card-img-top" alt="...">
+                </a>
 
-            <div class="details-container">
+                <div class="card-body">
 
-                <div class="name-container">
-                    <b>Name:</b> @Model[i].Name
+                    <div class="name-age">
+
+                        <div class="name-container">
+                            <h5>@Model[i].Name</h5>
+                        </div>
+
+                        <div class="age-container">
+                            <h6>@GetAge(Model[i].BirthDate)</h6>
+                        </div>
+
+                    </div>
+
+                    <p class="card-text">
+                        @foreach (var line in Model[i].About.Split("\r\n"))
+                        {
+                            @line <br>
+                        }
+                    </p>
+
                 </div>
 
-                <div class="age-container">
-                    
-                    <b>Age:</b> @GetAge(Model[i].BirthDate)
-                </div>
-
-            </div>
-
-            <div class="about-container">
-                @foreach (var line in Model[i].About.Split("\r\n"))
-                {
-                    @line <br>
-                }
-            </div>
-
-            <div class="references-container">
-                [ @Html.ActionLink("Edit", "Edit", new { id = Model[i].Id }) |
-                @Html.ActionLink("Details", "Details", new { id = Model[i].Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = Model[i].Id }) ]
             </div>
         </div>
     }
@@ -74,3 +98,5 @@
     }
 }
 </div>
+
+<script src="~/js/search.js" ></script>

@@ -1,15 +1,5 @@
 import Cropper from "./cropper/cropper.esm.js";
 
-const aboutTextarea = document.getElementById("about-textarea");
-aboutTextarea.style.height = 0;
-aboutTextarea.style.height = (aboutTextarea.scrollHeight) + "px";
-
-aboutTextarea.oninput = () =>
-{
-    aboutTextarea.style.height = 0;
-    aboutTextarea.style.height = (aboutTextarea.scrollHeight) + "px";
-}
-
 const titlePhotoInput = document.getElementById("title-photo-input");
 const allPhotos = document.getElementById("all-photos-input");
 
@@ -43,7 +33,9 @@ document.getElementById("submit-all-photos").onclick = async () =>
         const newPhotoPath = await fetch(`${window.location.origin}/api/photos`,{
             method: 'POST',
             body: dataToSend
-        }).then(response => response.json()).then(result => result.photoPath);
+        })
+            .then(response => response.json())
+            .then(result => result.photoPath);
 
         console.log(newPhotoPath);
 
@@ -168,8 +160,6 @@ allDeleteBtns.forEach(btn => {
         btn.parentElement.remove();
     }
 });
-
-
 
 const addPhotoButton = document.getElementById("add-photo-container");
 
