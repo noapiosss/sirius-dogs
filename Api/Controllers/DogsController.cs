@@ -33,8 +33,8 @@ public class DogsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(ICollection<Dog> dogs, CancellationToken cancellationToken = default)
-    {        
+    public IActionResult Index(ICollection<Dog> dogs, CancellationToken cancellationToken = default)
+    {
         return View(dogs);
     }
     public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
@@ -52,16 +52,18 @@ public class DogsController : Controller
         return View("Index", result.Dogs);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Index([FromForm] string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
+    [HttpGet]
+    public async Task<IActionResult> Index([FromForm] string something, string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
     {
-        var query = new SearchGodQuery
+        var query = new SearchDogQuery
         {
             SearchRequest = searchRequest,
             MaxAge = filterAge,
             Row = filterRow,
-            Enclosure = filterEnclosure
+            Enclosure = filterEnclosure,
+            WentHome = Request.Headers["Referer"].ToString().Split("/").Last() == "Home" ? true : false
         };
+
         var result = await _mediator.Send(query, cancellationToken);
         
         return View(result.Dogs);

@@ -13,36 +13,38 @@ using System;
 
 namespace Domain.Queries;
 
-public class SearchGodQuery : IRequest<SearchGodQueryResult>
+public class SearchDogQuery : IRequest<SearchDogQueryResult>
 {
     public string SearchRequest { get; init; }
     public int MaxAge { get; init; }
     public int Row { get; init; }
     public int Enclosure { get; init; }
+    public bool WentHome { get; init; }
 }
 
-public class SearchGodQueryResult
+public class SearchDogQueryResult
 {
     public ICollection<Dog> Dogs { get; init; }
 }
 
-internal class SearchGodQueryHandler : IRequestHandler<SearchGodQuery, SearchGodQueryResult>
+internal class SearchDogQueryHandler : IRequestHandler<SearchDogQuery, SearchDogQueryResult>
 {
     private readonly DogesDbContext _dbContext;
 
 
-    public SearchGodQueryHandler(DogesDbContext dbContext)
+    public SearchDogQueryHandler(DogesDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-    public async Task<SearchGodQueryResult> Handle(SearchGodQuery request, CancellationToken cancellationToken)
+    public async Task<SearchDogQueryResult> Handle(SearchDogQuery request, CancellationToken cancellationToken)
     {
         var searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
         var minBirthDate = DateTime.UtcNow.AddMonths(-request.MaxAge);
         minBirthDate = minBirthDate.AddDays(-minBirthDate.Day);
 
         var dogs = await _dbContext.Doges
-            .Where(d => d.BirthDate.Date >= minBirthDate.Date &&
+            .Where(d => d.WentHome == request.WentHome &&
+                d.BirthDate.Date >= minBirthDate.Date &&
                 (request.Row == 0 || d.Row == request.Row) &&
                 (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&                    
                 (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
@@ -53,7 +55,7 @@ internal class SearchGodQueryHandler : IRequestHandler<SearchGodQuery, SearchGod
             .OrderByDescending(d => d.Id)
             .ToListAsync(cancellationToken);
         
-        return new SearchGodQueryResult
+        return new SearchDogQueryResult
         {
             Dogs = dogs
         };

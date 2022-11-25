@@ -3,7 +3,18 @@ const editBtn = document.getElementById("edit-button");
 const backToListBtn = document.getElementById("back-to-list-button");
 
 editBtn.onclick = () => { window.location.href = `${window.location.origin}/Dogs/Edit/${statusBtn.getAttribute("dogId")}` }
-backToListBtn.onclick = () => { window.location.href = `${window.location.origin}` }
+
+backToListBtn.onclick = () => 
+{
+    if (statusBtn.className === "btn btn-danger")
+    {
+        window.location.href = `${window.location.origin}/Dogs/Home`;
+    }
+    else
+    {
+        window.location.href = `${window.location.origin}/Dogs/Shelter`;
+    }
+}
 
 statusBtn.onclick = async () =>
 {

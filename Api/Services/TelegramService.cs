@@ -122,7 +122,7 @@ public class TelegramService : ITelegramService
             if (update.Message.Text.Contains("/Search"))
             {
                 var searchRequest = update.Message.Text.Split(" ", 2)[1];
-                var query = new SearchGodQuery{SearchRequest = searchRequest};
+                var query = new SearchDogQuery{SearchRequest = searchRequest};
                 var response = await _mediator.Send(query, cancellationToken);
                 var dogs = response.Dogs;
                 if (dogs.Count == 0)
