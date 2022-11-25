@@ -37,6 +37,9 @@ public class Dog
     [Column("title_photo")]
     public string TitlePhoto { get; set; }
 
+    [Column("went_home")]
+    public bool WentHome { get; set; }
+
     [Column("last_update")]
     public DateTime LastUpdate { get; set; }
     

@@ -35,7 +35,7 @@ public class DogsController : Controller
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
     {
-        var query = new GetAllDogsQuery{};
+        var query = new GetShelterDogsQuery{};
         var result = await _mediator.Send(query, cancellationToken);
         
         return View(result.Dogs);
