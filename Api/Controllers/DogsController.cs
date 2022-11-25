@@ -33,12 +33,23 @@ public class DogsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(ICollection<Dog> dogs, CancellationToken cancellationToken = default)
+    {        
+        return View(dogs);
+    }
+    public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
     {
         var query = new GetShelterDogsQuery{};
         var result = await _mediator.Send(query, cancellationToken);
         
-        return View(result.Dogs);
+        return View("Index", result.Dogs);
+    }
+    public async Task<IActionResult> Home(CancellationToken cancellationToken = default)
+    {
+        var query = new GetHomeDogsQuery{};
+        var result = await _mediator.Send(query, cancellationToken);
+        
+        return View("Index", result.Dogs);
     }
 
     [HttpPost]

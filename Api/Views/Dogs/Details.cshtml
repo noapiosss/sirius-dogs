@@ -121,9 +121,19 @@
                 </dl>
             </div>
             <div>
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-                <a asp-action="Index">Back to List</a>
+                @if(Model.WentHome)
+                {
+                    <button type="button" class="btn btn-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-success" id="status-button" dogId="@Model.Id">Went home</button>
+                }
+                <button type="button" class="btn btn-warning" id="edit-button" dogId="@Model.Id">Edit</button>
+                <button type="button" class="btn btn-primary" id="back-to-list-button">Back to List</button>
             </div>
         </td>
     </tbody>
 </table>
+
+<script src="~/js/went-home.js"></script>
