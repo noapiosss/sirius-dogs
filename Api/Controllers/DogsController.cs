@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,113 +8,112 @@ using System.Threading.Tasks;
 using Api.Models;
 
 using Contracts.Database;
-using Contracts.Http;
 
 using Domain.Commands;
 using Domain.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Controllers;
-
-public class DogsController : Controller
+namespace Api.Controllers
 {
-    private readonly ILogger<DogsController> _logger;
-    private readonly IMediator _mediator;
-    private readonly IWebHostEnvironment _environment;
-
-    public DogsController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+    public class DogsController : Controller
     {
-        _logger = logger;
-        _mediator = mediator;
-        _environment = environment;
-    }
+        private readonly ILogger<DogsController> _logger;
+        private readonly IMediator _mediator;
+        private readonly IWebHostEnvironment _environment;
 
-    public IActionResult Index(ICollection<Dog> dogs, CancellationToken cancellationToken = default)
-    {
-        return View(dogs);
-    }
-    public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
-    {
-        var query = new GetShelterDogsQuery { };
-        var result = await _mediator.Send(query, cancellationToken);
-
-        return View("Index", result.Dogs);
-    }
-    public async Task<IActionResult> Home(CancellationToken cancellationToken = default)
-    {
-        var query = new GetHomeDogsQuery { };
-        var result = await _mediator.Send(query, cancellationToken);
-
-        return View("Index", result.Dogs);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Index([FromForm] string something, string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
-    {
-        var query = new SearchDogQuery
+        public DogsController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
         {
-            SearchRequest = searchRequest,
-            MaxAge = filterAge,
-            Row = filterRow,
-            Enclosure = filterEnclosure,
-            WentHome = Request.Headers["Referer"].ToString().Split("/").Last() == "Home" ? true : false
-        };
-
-        var result = await _mediator.Send(query, cancellationToken);
-
-        return View(result.Dogs);
-    }
-
-    public IActionResult Create()
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromForm] Dog dog, IFormFile croppedImage, List<IFormFile> allPhotos, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            _logger = logger;
+            _mediator = mediator;
+            _environment = environment;
         }
 
-        if (!ModelState.IsValid)
+        public IActionResult Index(ICollection<Dog> dogs)
         {
-            return View(dog);
+            return View(dogs);
         }
 
-        var command = new AddDogCommand
+        public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
         {
-            Name = dog.Name,
-            Breed = dog.Breed,
-            Size = dog.Size,
-            BirthDate = dog.BirthDate,
-            About = dog.About,
-            Row = dog.Row,
-            Enclosure = dog.Enclosure,
-            RootPath = _environment.WebRootPath,
-            UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
-        };
+            GetShelterDogsQuery query = new() { };
+            GetShelterDogsQueryResult result = await _mediator.Send(query, cancellationToken);
 
-        var response = await _mediator.Send(command, cancellationToken);
-
-        // AddTitlePhoto
-        if (croppedImage != null)
+            return View("Index", result.Dogs);
+        }
+        public async Task<IActionResult> Home(CancellationToken cancellationToken = default)
         {
-            using (var titlePhotoStream = croppedImage.OpenReadStream())
+            GetHomeDogsQuery query = new() { };
+            GetHomeDogsQueryResult result = await _mediator.Send(query, cancellationToken);
+
+            return View("Index", result.Dogs);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index([FromForm] string something, string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
+        {
+            SearchDogQuery query = new()
             {
-                var addTitlePhotoCommand = new AddTitlePhotoCommand
+                SearchRequest = searchRequest,
+                MaxAge = filterAge,
+                Row = filterRow,
+                Enclosure = filterEnclosure,
+                WentHome = Request.Headers["Referer"]
+                    .ToString()
+                    .Split("/")
+                    .Last() == "Home"
+            };
+
+            SearchDogQueryResult result = await _mediator.Send(query, cancellationToken);
+
+            return View(result.Dogs);
+        }
+
+        public IActionResult Create()
+        {
+            return HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null
+                ? Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}")
+                : View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] Dog dog, IFormFile croppedImage, List<IFormFile> allPhotos, CancellationToken cancellationToken = default)
+        {
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(dog);
+            }
+
+            AddDogCommand command = new()
+            {
+                Name = dog.Name,
+                Breed = dog.Breed,
+                Size = dog.Size,
+                BirthDate = dog.BirthDate,
+                About = dog.About,
+                Row = dog.Row,
+                Enclosure = dog.Enclosure,
+                RootPath = _environment.WebRootPath,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
+            };
+
+            AddDogCommandResult response = await _mediator.Send(command, cancellationToken);
+
+            // AddTitlePhoto
+            if (croppedImage != null)
+            {
+                using System.IO.Stream titlePhotoStream = croppedImage.OpenReadStream();
+                AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = response.Dog.Id,
                     TitlePhotoStream = titlePhotoStream,
@@ -124,18 +121,16 @@ public class DogsController : Controller
                     UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
-                await _mediator.Send(addTitlePhotoCommand, cancellationToken);
+                _ = await _mediator.Send(addTitlePhotoCommand, cancellationToken);
             }
-        }
 
-        // AddOthersPhotos
-        if (allPhotos != null)
-        {
-            foreach (var photo in allPhotos)
+            // AddOthersPhotos
+            if (allPhotos != null)
             {
-                using (var photoStream = photo.OpenReadStream())
+                foreach (IFormFile photo in allPhotos)
                 {
-                    var addPhotoCommand = new AddPhotoCommand
+                    using System.IO.Stream photoStream = photo.OpenReadStream();
+                    AddPhotoCommand addPhotoCommand = new()
                     {
                         DogId = response.Dog.Id,
                         PhotoStream = photoStream,
@@ -143,74 +138,72 @@ public class DogsController : Controller
                         UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                     };
 
-                    await _mediator.Send(addPhotoCommand, cancellationToken);
+                    _ = await _mediator.Send(addPhotoCommand, cancellationToken);
                 }
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        return RedirectToAction(nameof(Index));
-    }
-
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
         {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-
-        var query = new GetDogByIdQuery { DogId = id };
-        var result = await _mediator.Send(query, cancellationToken);
-        return View(result.Dog);
-    }
-
-    [HttpPost]
-    [ActionName("Delete")]
-    public async Task<IActionResult> DeleteDog(int id, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-
-        var command = new DeleteDogCommand
-        {
-            DogId = id,
-            RootPath = _environment.WebRootPath
-        };
-        var result = await _mediator.Send(command, cancellationToken);
-        return RedirectToAction(nameof(Index));
-    }
-
-    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
-    {
-        var query = new GetDogByIdQuery { DogId = id };
-        var result = await _mediator.Send(query, cancellationToken);
-        return View(result.Dog);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Edit([FromForm] Dog dog, IFormFile croppedImage, List<IFormFile> allPhotos, [FromRoute] int id, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return View(dog);
-        }
-
-        dog.Id = id;
-        var command = new EditDogCommand { Dog = dog };
-        await _mediator.Send(command, cancellationToken);
-
-        // ChangeTitlePhoto
-        if (croppedImage != null)
-        {
-            using (var titlePhotoStream = croppedImage.OpenReadStream())
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
             {
-                var addTitlePhotoCommand = new AddTitlePhotoCommand
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            GetDogByIdQuery query = new() { DogId = id };
+            GetDogByIdQueryResult result = await _mediator.Send(query, cancellationToken);
+            return View(result.Dog);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteDog(int id, CancellationToken cancellationToken = default)
+        {
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            DeleteDogCommand command = new()
+            {
+                DogId = id,
+                RootPath = _environment.WebRootPath
+            };
+            DeleteDogCommandResult result = await _mediator.Send(command, cancellationToken);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
+        {
+            GetDogByIdQuery query = new() { DogId = id };
+            GetDogByIdQueryResult result = await _mediator.Send(query, cancellationToken);
+            return View(result.Dog);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromForm] Dog dog, IFormFile croppedImage, List<IFormFile> allPhotos, [FromRoute] int id, CancellationToken cancellationToken = default)
+        {
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(dog);
+            }
+
+            dog.Id = id;
+            EditDogCommand command = new() { Dog = dog };
+            _ = await _mediator.Send(command, cancellationToken);
+
+            // ChangeTitlePhoto
+            if (croppedImage != null)
+            {
+                using System.IO.Stream titlePhotoStream = croppedImage.OpenReadStream();
+                AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = id,
                     TitlePhotoStream = titlePhotoStream,
@@ -218,18 +211,16 @@ public class DogsController : Controller
                     UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
-                await _mediator.Send(addTitlePhotoCommand, cancellationToken);
+                _ = await _mediator.Send(addTitlePhotoCommand, cancellationToken);
             }
-        }
 
-        // AddOthersPhotos
-        if (allPhotos != null)
-        {
-            foreach (var photo in allPhotos)
+            // AddOthersPhotos
+            if (allPhotos != null)
             {
-                using (var photoStream = photo.OpenReadStream())
+                foreach (IFormFile photo in allPhotos)
                 {
-                    var addPhotoCommand = new AddPhotoCommand
+                    using System.IO.Stream photoStream = photo.OpenReadStream();
+                    AddPhotoCommand addPhotoCommand = new()
                     {
                         DogId = id,
                         PhotoStream = photoStream,
@@ -237,30 +228,30 @@ public class DogsController : Controller
                         UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                     };
 
-                    await _mediator.Send(addPhotoCommand, cancellationToken);
+                    _ = await _mediator.Send(addPhotoCommand, cancellationToken);
                 }
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        return RedirectToAction(nameof(Index));
-    }
-
-    public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
         {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            GetDogByIdQuery query = new() { DogId = id };
+            GetDogByIdQueryResult result = await _mediator.Send(query, cancellationToken);
+            result.Dog.BirthDate = result.Dog.BirthDate.ToLocalTime();
+            return View(result.Dog);
         }
 
-        var query = new GetDogByIdQuery { DogId = id };
-        var result = await _mediator.Send(query, cancellationToken);
-        result.Dog.BirthDate = result.Dog.BirthDate.ToLocalTime();
-        return View(result.Dog);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

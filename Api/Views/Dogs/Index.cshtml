@@ -75,10 +75,8 @@
                     </div>
 
                     <p class="card-text">
-                        @foreach (var line in Model[i].About.Split("\r\n"))
-                        {
-                            @line <br>
-                        }
+                        @{string firstLineAbout = Model[i].About.Split("\r\n")[0].Length < 30 ? Model[i].About.Split("\r\n")[0] : Model[i].About.Split("\r\n")[0].Substring(0, 30).Trim();}
+                        @String.Concat(firstLineAbout, "...")
                     </p>
 
                 </div>

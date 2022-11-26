@@ -19,14 +19,12 @@ public abstract class Helper<TModel> : RazorPage<TModel>
             return IsPlural(years) ? $"{years} years" : $"{years} year";
         }
 
-        int months = (DateTime.Now.Year - birthDate.Year) * 12 + DateTime.Now.Month - birthDate.Month;
+        int months = ((DateTime.Now.Year - birthDate.Year) * 12) + DateTime.Now.Month - birthDate.Month;
         return IsPlural(months) ? $"{months} months" : $"{months} month";
     }
 
-    private bool IsPlural(int number)
+    private static bool IsPlural(int number)
     {
-        if (number % 100 == 11) return true;
-        if (number % 10 == 1) return false;
-        return true;
+        return number % 100 == 11 || number % 10 != 1;
     }
 }

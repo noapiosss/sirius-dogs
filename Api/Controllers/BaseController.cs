@@ -8,40 +8,41 @@ using Microsoft.AspNetCore.Mvc;
 
 using Npgsql;
 
-namespace Api.Controllers;
-
-public class BaseController : ControllerBase
+namespace Api.Controllers
 {
-    protected async Task<IActionResult> SafeExecute(Func<Task<IActionResult>> action, CancellationToken cansellationToken)
+    public class BaseController : ControllerBase
     {
-        try
+        protected async Task<IActionResult> SafeExecute(Func<Task<IActionResult>> action, CancellationToken cansellationToken)
         {
-            return await action();
-        }
-        catch (InvalidOperationException ioe) when (ioe.InnerException is NpgsqlException)
-        {
-            var response = new ErrorResponse
+            try
             {
-                Code = ErrorCode.DbFailureError,
-                Message = "DB failure"
-            };
-
-            return ToActionResult(response);
-        }
-        catch (Exception)
-        {
-            var response = new ErrorResponse
+                return await action();
+            }
+            catch (InvalidOperationException ioe) when (ioe.InnerException is NpgsqlException)
             {
-                Code = ErrorCode.InternalServerError,
-                Message = "Unhandled error"
-            };
+                ErrorResponse response = new()
+                {
+                    Code = ErrorCode.DbFailureError,
+                    Message = "DB failure"
+                };
 
-            return ToActionResult(response);
+                return ToActionResult(response);
+            }
+            catch (Exception)
+            {
+                ErrorResponse response = new()
+                {
+                    Code = ErrorCode.InternalServerError,
+                    Message = "Unhandled error"
+                };
+
+                return ToActionResult(response);
+            }
         }
-    }
 
-    protected IActionResult ToActionResult(ErrorResponse errorResponse)
-    {
-        return StatusCode((int)errorResponse.Code / 100, errorResponse);
+        protected IActionResult ToActionResult(ErrorResponse errorResponse)
+        {
+            return StatusCode((int)errorResponse.Code / 100, errorResponse);
+        }
     }
 }

@@ -12,53 +12,54 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Queries;
-
-public class SearchDogQuery : IRequest<SearchDogQueryResult>
+namespace Domain.Queries
 {
-    public string SearchRequest { get; init; }
-    public int MaxAge { get; init; }
-    public int Row { get; init; }
-    public int Enclosure { get; init; }
-    public bool WentHome { get; init; }
-}
-
-public class SearchDogQueryResult
-{
-    public ICollection<Dog> Dogs { get; init; }
-}
-
-internal class SearchDogQueryHandler : IRequestHandler<SearchDogQuery, SearchDogQueryResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-
-    public SearchDogQueryHandler(DogesDbContext dbContext)
+    public class SearchDogQuery : IRequest<SearchDogQueryResult>
     {
-        _dbContext = dbContext;
+        public string SearchRequest { get; init; }
+        public int MaxAge { get; init; }
+        public int Row { get; init; }
+        public int Enclosure { get; init; }
+        public bool WentHome { get; init; }
     }
-    public async Task<SearchDogQueryResult> Handle(SearchDogQuery request, CancellationToken cancellationToken)
+
+    public class SearchDogQueryResult
     {
-        var searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
-        var minBirthDate = DateTime.UtcNow.AddMonths(-request.MaxAge);
-        minBirthDate = minBirthDate.AddDays(-minBirthDate.Day);
+        public ICollection<Dog> Dogs { get; init; }
+    }
 
-        var dogs = await _dbContext.Doges
-            .Where(d => d.WentHome == request.WentHome &&
-                d.BirthDate.Date >= minBirthDate.Date &&
-                (request.Row == 0 || d.Row == request.Row) &&
-                (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
-                (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
-                EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
-                EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
-                EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
-            .Include(d => d.Photos)
-            .OrderByDescending(d => d.Id)
-            .ToListAsync(cancellationToken);
+    internal class SearchDogQueryHandler : IRequestHandler<SearchDogQuery, SearchDogQueryResult>
+    {
+        private readonly DogesDbContext _dbContext;
 
-        return new SearchDogQueryResult
+
+        public SearchDogQueryHandler(DogesDbContext dbContext)
         {
-            Dogs = dogs
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<SearchDogQueryResult> Handle(SearchDogQuery request, CancellationToken cancellationToken)
+        {
+            string searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
+            DateTime minBirthDate = DateTime.UtcNow.AddMonths(-request.MaxAge);
+            minBirthDate = minBirthDate.AddDays(-minBirthDate.Day);
+
+            List<Dog> dogs = await _dbContext.Doges
+                .Where(d => d.WentHome == request.WentHome &&
+                    d.BirthDate.Date >= minBirthDate.Date &&
+                    (request.Row == 0 || d.Row == request.Row) &&
+                    (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
+                    (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
+                .Include(d => d.Photos)
+                .OrderByDescending(d => d.Id)
+                .ToListAsync(cancellationToken);
+
+            return new SearchDogQueryResult
+            {
+                Dogs = dogs
+            };
+        }
     }
 }

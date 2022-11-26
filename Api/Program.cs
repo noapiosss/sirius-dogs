@@ -6,7 +6,6 @@ using Domain;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -32,28 +31,28 @@ builder.Services.Configure<BotConfiguration>(builder.Configuration);
 
 builder.Services.AddDomainServices((sp, options) =>
 {
-    var configuration = sp.GetRequiredService<IOptionsMonitor<AppConfiguration>>();
-    options.UseNpgsql(configuration.CurrentValue.ConnectionString);
+    IOptionsMonitor<AppConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<AppConfiguration>>();
+    _ = options.UseNpgsql(configuration.CurrentValue.ConnectionString);
 });
 
 builder.Services.AddHttpClient("tgclient")
     .AddTypedClient<ITelegramBotClient>((client, sp) =>
     {
-        var configuration = sp.GetRequiredService<IOptionsMonitor<BotConfiguration>>();
+        IOptionsMonitor<BotConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<BotConfiguration>>();
         return new TelegramBotClient(configuration.CurrentValue.BotAccessToken, client);
     });
 
 builder.Services.AddTransient<ITelegramService, TelegramService>();
 builder.Services.AddHostedService<InitService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    _ = app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
 app.UseAuthentication();

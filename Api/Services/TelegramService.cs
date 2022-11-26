@@ -66,19 +66,18 @@ public class TelegramService : ITelegramService
                         $"Enclosure: {dog.Enclosure}\n" +
                         $"Last update: {dog.LastUpdate}";
 
-                    using (Stream stream = System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}"))
-                    {
-                        await _telegramBotClient.SendPhotoAsync(chatId,
-                            photo: new InputOnlineFile(content: stream, fileName: "Title photo"),
-                            caption: message);
-                    }
+                    using Stream stream = System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}");
+                    await _telegramBotClient.SendPhotoAsync(chatId,
+                        photo: new InputOnlineFile(content: stream, fileName: "Title photo"),
+                        caption: message,
+                        cancellationToken: cancellationToken);
                 }
                 return;
             }
 
             if (update.Message.Text.Contains("/GetDogById"))
             {
-                var dogId = Int32.Parse(update.Message.Text.Split(" ", 2)[1]);
+                var dogId = int.Parse(update.Message.Text.Split(" ", 2)[1]);
                 var query = new GetDogByIdQuery { DogId = dogId };
                 var response = await _mediator.Send(query, cancellationToken);
                 var dog = response.Dog;
@@ -93,14 +92,17 @@ public class TelegramService : ITelegramService
                     $"Last update: {dog.LastUpdate}";
 
 
-                List<Stream> streamList = new List<Stream>();
-                streamList.Add(System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}"));
+                List<Stream> streamList = new()
+                {
+                    System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}")
+                };
+
                 foreach (var photo in dog.Photos)
                 {
                     streamList.Add(System.IO.File.OpenRead($"./wwwroot{photo.PhotoPath}"));
                 }
 
-                List<InputMediaPhoto> media = new List<InputMediaPhoto>();
+                List<InputMediaPhoto> media = new();
 
                 foreach (var stream in streamList)
                 {
@@ -153,14 +155,17 @@ public class TelegramService : ITelegramService
                         $"Last update: {dog.LastUpdate}";
 
 
-                    List<Stream> streamList = new List<Stream>();
-                    streamList.Add(System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}"));
+                    List<Stream> streamList = new()
+                    {
+                        System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}")
+                    };
+                    
                     foreach (var photo in dog.Photos)
                     {
                         streamList.Add(System.IO.File.OpenRead($"./wwwroot{photo.PhotoPath}"));
                     }
 
-                    List<InputMediaPhoto> media = new List<InputMediaPhoto>();
+                    List<InputMediaPhoto> media = new();
 
                     foreach (var stream in streamList)
                     {

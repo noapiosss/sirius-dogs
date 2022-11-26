@@ -1,7 +1,8 @@
-namespace Api;
-
-public class BotConfiguration
+namespace Api
 {
-    public string Domain { get; set; }
-    public string BotAccessToken { get; set; }
+    public class BotConfiguration
+    {
+        public string Domain { get; set; }
+        public string BotAccessToken { get; set; }
+    }
 }

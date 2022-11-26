@@ -1,4 +1,3 @@
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,38 +7,39 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Commands;
-
-public class DogWentHomeCommand : IRequest<DogWentHomeCommandResult>
+namespace Domain.Commands
 {
-    public int DogId { get; init; }
-}
-
-public class DogWentHomeCommandResult
-{
-    public bool StatusIsChanged { get; init; }
-}
-
-internal class DogWentHomeCommandHandler : IRequestHandler<DogWentHomeCommand, DogWentHomeCommandResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-    public DogWentHomeCommandHandler(DogesDbContext dbContext)
+    public class DogWentHomeCommand : IRequest<DogWentHomeCommandResult>
     {
-        _dbContext = dbContext;
+        public int DogId { get; init; }
     }
-    public async Task<DogWentHomeCommandResult> Handle(DogWentHomeCommand request, CancellationToken cancellationToken = default)
+
+    public class DogWentHomeCommandResult
     {
-        var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+        public bool StatusIsChanged { get; init; }
+    }
 
-        dog.WentHome = true;
+    internal class DogWentHomeCommandHandler : IRequestHandler<DogWentHomeCommand, DogWentHomeCommandResult>
+    {
+        private readonly DogesDbContext _dbContext;
 
-        _dbContext.Doges.Update(dog);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new DogWentHomeCommandResult
+        public DogWentHomeCommandHandler(DogesDbContext dbContext)
         {
-            StatusIsChanged = true
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<DogWentHomeCommandResult> Handle(DogWentHomeCommand request, CancellationToken cancellationToken = default)
+        {
+            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+
+            dog.WentHome = true;
+
+            _ = _dbContext.Doges.Update(dog);
+            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new DogWentHomeCommandResult
+            {
+                StatusIsChanged = true
+            };
+        }
     }
 }

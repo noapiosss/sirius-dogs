@@ -7,16 +7,16 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
-namespace Domain;
-
-public static class TwitterCloneDomainExtensions
+namespace Domain
 {
-    public static IServiceCollection AddDomainServices(this IServiceCollection services,
-        Action<IServiceProvider, DbContextOptionsBuilder> dbOptionsAction)
+    public static class TwitterCloneDomainExtensions
     {
-        return services.AddMediatR(typeof(AddDogCommand))
-            .AddDbContext<DogesDbContext>(dbOptionsAction);
+        public static IServiceCollection AddDomainServices(this IServiceCollection services,
+            Action<IServiceProvider, DbContextOptionsBuilder> dbOptionsAction)
+        {
+            return services.AddMediatR(typeof(AddDogCommand))
+                .AddDbContext<DogesDbContext>(dbOptionsAction);
+        }
     }
 }

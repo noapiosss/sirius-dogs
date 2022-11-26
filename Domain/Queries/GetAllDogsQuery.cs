@@ -11,33 +11,34 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Queries;
-
-public class GetAllDogsQuery : IRequest<GetAllDogsQueryResult>
+namespace Domain.Queries
 {
-}
-
-public class GetAllDogsQueryResult
-{
-    public ICollection<Dog> Dogs { get; init; }
-}
-
-internal class GetAllDogsQueryHandler : IRequestHandler<GetAllDogsQuery, GetAllDogsQueryResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-
-    public GetAllDogsQueryHandler(DogesDbContext dbContext)
+    public class GetAllDogsQuery : IRequest<GetAllDogsQueryResult>
     {
-        _dbContext = dbContext;
     }
-    public async Task<GetAllDogsQueryResult> Handle(GetAllDogsQuery request, CancellationToken cancellationToken)
-    {
-        var allDogs = await _dbContext.Doges.OrderByDescending(d => d.Id).ToListAsync(cancellationToken);
 
-        return new GetAllDogsQueryResult
+    public class GetAllDogsQueryResult
+    {
+        public ICollection<Dog> Dogs { get; init; }
+    }
+
+    internal class GetAllDogsQueryHandler : IRequestHandler<GetAllDogsQuery, GetAllDogsQueryResult>
+    {
+        private readonly DogesDbContext _dbContext;
+
+
+        public GetAllDogsQueryHandler(DogesDbContext dbContext)
         {
-            Dogs = allDogs
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<GetAllDogsQueryResult> Handle(GetAllDogsQuery request, CancellationToken cancellationToken)
+        {
+            List<Dog> allDogs = await _dbContext.Doges.OrderByDescending(d => d.Id).ToListAsync(cancellationToken);
+
+            return new GetAllDogsQueryResult
+            {
+                Dogs = allDogs
+            };
+        }
     }
 }

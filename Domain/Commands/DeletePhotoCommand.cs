@@ -1,10 +1,7 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Contracts.Database;
 
 using Domain.Database;
 
@@ -12,48 +9,49 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Commands;
-
-public class DeletePhotoCommand : IRequest<DeletePhotoCommandResult>
+namespace Domain.Commands
 {
-    public int DogId { get; init; }
-    public string PhotoPath { get; init; }
-    public string RootPath { get; init; }
-    public string UpdatedBy { get; init; }
-}
-
-public class DeletePhotoCommandResult
-{
-    public bool PhotoIsDeleted { get; init; }
-}
-
-internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, DeletePhotoCommandResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-    public DeletePhotoCommandHandler(DogesDbContext dbContext)
+    public class DeletePhotoCommand : IRequest<DeletePhotoCommandResult>
     {
-        _dbContext = dbContext;
+        public int DogId { get; init; }
+        public string PhotoPath { get; init; }
+        public string RootPath { get; init; }
+        public string UpdatedBy { get; init; }
     }
-    public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
+
+    public class DeletePhotoCommandResult
     {
-        var photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
+        public bool PhotoIsDeleted { get; init; }
+    }
 
-        _dbContext.Remove(photo);
-        _dbContext.SaveChanges();
+    internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, DeletePhotoCommandResult>
+    {
+        private readonly DogesDbContext _dbContext;
 
-        File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/", "\\")}");
-
-        var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-        dog.LastUpdate = DateTime.UtcNow;
-        dog.UpdatedBy = request.UpdatedBy;
-
-        _dbContext.Doges.Update(dog);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new DeletePhotoCommandResult
+        public DeletePhotoCommandHandler(DogesDbContext dbContext)
         {
-            PhotoIsDeleted = true
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
+        {
+            Contracts.Database.Image photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
+
+            _ = _dbContext.Remove(photo);
+            _ = _dbContext.SaveChanges();
+
+            File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/", "\\")}");
+
+            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+            dog.LastUpdate = DateTime.UtcNow;
+            dog.UpdatedBy = request.UpdatedBy;
+
+            _ = _dbContext.Doges.Update(dog);
+            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new DeletePhotoCommandResult
+            {
+                PhotoIsDeleted = true
+            };
+        }
     }
 }

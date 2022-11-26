@@ -1,77 +1,67 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Api.Models;
-
-using Contracts.Database;
-using Contracts.Http;
-
 using Domain.Commands;
-using Domain.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Controllers;
-
-[Route("api")]
-public class WentHomeController : BaseController
+namespace Api.Controllers
 {
-    private readonly ILogger<DogsController> _logger;
-    private readonly IMediator _mediator;
-    private readonly IWebHostEnvironment _environment;
-
-    public WentHomeController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+    [Route("api")]
+    public class WentHomeController : BaseController
     {
-        _logger = logger;
-        _mediator = mediator;
-        _environment = environment;
-    }
+        private readonly ILogger<DogsController> _logger;
+        private readonly IMediator _mediator;
+        private readonly IWebHostEnvironment _environment;
 
-    [HttpPost("{dogId}/wenthome")]
-    public async Task<IActionResult> WentHome([FromRoute] int dogId, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+        public WentHomeController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
         {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            _logger = logger;
+            _mediator = mediator;
+            _environment = environment;
         }
 
-        var wentHomeCommand = new DogWentHomeCommand
+        [HttpPost("{dogId}/wenthome")]
+        public async Task<IActionResult> WentHome([FromRoute] int dogId, CancellationToken cancellationToken = default)
         {
-            DogId = dogId
-        };
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
 
-        await _mediator.Send(wentHomeCommand, cancellationToken);
+            DogWentHomeCommand wentHomeCommand = new DogWentHomeCommand
+            {
+                DogId = dogId
+            };
 
-        return Ok();
-    }
+            _ = await _mediator.Send(wentHomeCommand, cancellationToken);
 
-    [HttpPost("{dogId}/backtoshelter")]
-    public async Task<IActionResult> BackToShelter([FromRoute] int dogId, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            return Ok();
         }
 
-        var backToShelterCommand = new DogBackToShelterCommand
+        [HttpPost("{dogId}/backtoshelter")]
+        public async Task<IActionResult> BackToShelter([FromRoute] int dogId, CancellationToken cancellationToken = default)
         {
-            DogId = dogId
-        };
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
 
-        await _mediator.Send(backToShelterCommand, cancellationToken);
+            DogBackToShelterCommand backToShelterCommand = new DogBackToShelterCommand
+            {
+                DogId = dogId
+            };
 
-        return Ok();
+            _ = await _mediator.Send(backToShelterCommand, cancellationToken);
+
+            return Ok();
+        }
     }
 }

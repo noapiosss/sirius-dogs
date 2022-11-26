@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -15,85 +14,85 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Controllers;
-
-public class SessionController : Controller
+namespace Api.Controllers
 {
-    private readonly ILogger<SessionController> _logger;
-
-    public SessionController(ILogger<SessionController> logger)
+    public class SessionController : Controller
     {
-        _logger = logger;
-    }
+        private readonly ILogger<SessionController> _logger;
 
-    public IActionResult Signin()
-    {
-        return View();
-    }
+        public SessionController(ILogger<SessionController> logger)
+        {
+            _logger = logger;
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> Signin([FromForm] string username, string password, CancellationToken cancellationToken = default)
-    {
-        if (password == "")
+        public IActionResult Signin()
         {
             return View();
         }
 
-        string passwordSHA256;
-        using (SHA256 sha256Hash = SHA256.Create())
+        [HttpPost]
+        public async Task<IActionResult> Signin([FromForm] string username, string password, CancellationToken cancellationToken = default)
         {
-            // ComputeHash - returns byte array  
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-            // Convert byte array to a string   
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
+            if (password == "")
             {
-                builder.Append(bytes[i].ToString("x2"));
+                return View();
             }
-            passwordSHA256 = builder.ToString();
-        }
 
-        if (passwordSHA256 == "68e3262d9d6c110ccdd18e51efc90923fca0d38262095e129b538bafc367981f")
-        {
-            var claims = new[]
+            string passwordSHA256;
+            using (SHA256 sha256Hash = SHA256.Create())
             {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    _ = builder.Append(bytes[i].ToString("x2"));
+                }
+                passwordSHA256 = builder.ToString();
+            }
+
+            if (passwordSHA256 == "68e3262d9d6c110ccdd18e51efc90923fca0d38262095e129b538bafc367981f")
+            {
+                Claim[] claims = new[]
+                {
                 new Claim(ClaimTypes.Name, username)
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var authProperties = new AuthenticationProperties();
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                AuthenticationProperties authProperties = new AuthenticationProperties();
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                claimsPrincipal,
-                authProperties);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    claimsPrincipal,
+                    authProperties);
 
-            if (Request.Headers["Referer"].ToString().Split('?').Length == 1)
-            {
-                return RedirectToAction("Shelter", "Dogs");
+                return Request.Headers["Referer"].ToString().Split('?').Length == 1
+                    ? RedirectToAction("Shelter", "Dogs")
+                    : Redirect($"{Request.Headers["Origin"]}{Request.Headers["Referer"].ToString().Split('?')[1]}");
             }
 
-            return Redirect($"{Request.Headers["Origin"].ToString()}{Request.Headers["Referer"].ToString().Split('?')[1]}");
+            return View();
         }
 
-        return View();
-    }
+        public async Task<IActionResult> Signout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Shelter", "Dogs");
+        }
 
-    public async Task<IActionResult> Signout()
-    {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Shelter", "Dogs");
-    }
+        [HttpGet("username")]
+        public string GetSessionUsername(CancellationToken cancellationToken)
+        {
+            return HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        }
 
-    [HttpGet("username")]
-    public string GetSessionUsername(CancellationToken cancellationToken) =>
-            HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

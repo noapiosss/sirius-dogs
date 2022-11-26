@@ -1,4 +1,3 @@
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,38 +7,39 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Commands;
-
-public class DogBackToShelterCommand : IRequest<DogBackToShelterCommandResult>
+namespace Domain.Commands
 {
-    public int DogId { get; init; }
-}
-
-public class DogBackToShelterCommandResult
-{
-    public bool StatusIsChanged { get; init; }
-}
-
-internal class DogBackToShelterCommandHandler : IRequestHandler<DogBackToShelterCommand, DogBackToShelterCommandResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-    public DogBackToShelterCommandHandler(DogesDbContext dbContext)
+    public class DogBackToShelterCommand : IRequest<DogBackToShelterCommandResult>
     {
-        _dbContext = dbContext;
+        public int DogId { get; init; }
     }
-    public async Task<DogBackToShelterCommandResult> Handle(DogBackToShelterCommand request, CancellationToken cancellationToken = default)
+
+    public class DogBackToShelterCommandResult
     {
-        var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+        public bool StatusIsChanged { get; init; }
+    }
 
-        dog.WentHome = false;
+    internal class DogBackToShelterCommandHandler : IRequestHandler<DogBackToShelterCommand, DogBackToShelterCommandResult>
+    {
+        private readonly DogesDbContext _dbContext;
 
-        _dbContext.Doges.Update(dog);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return new DogBackToShelterCommandResult
+        public DogBackToShelterCommandHandler(DogesDbContext dbContext)
         {
-            StatusIsChanged = true
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<DogBackToShelterCommandResult> Handle(DogBackToShelterCommand request, CancellationToken cancellationToken = default)
+        {
+            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+
+            dog.WentHome = false;
+
+            _ = _dbContext.Doges.Update(dog);
+            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new DogBackToShelterCommandResult
+            {
+                StatusIsChanged = true
+            };
+        }
     }
 }

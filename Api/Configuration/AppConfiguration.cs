@@ -1,6 +1,7 @@
-namespace Api.Configuration;
-
-public class AppConfiguration
+namespace Api.Configuration
 {
-    public string ConnectionString { get; set; }
+    public class AppConfiguration
+    {
+        public string ConnectionString { get; set; }
+    }
 }

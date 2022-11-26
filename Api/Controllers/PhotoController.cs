@@ -1,92 +1,84 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Api.Models;
-
-using Contracts.Database;
 using Contracts.Http;
 
 using Domain.Commands;
-using Domain.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Controllers;
-
-[Route("api/photos")]
-public class PhotoController : BaseController
+namespace Api.Controllers
 {
-    private readonly ILogger<DogsController> _logger;
-    private readonly IMediator _mediator;
-    private readonly IWebHostEnvironment _environment;
-
-    public PhotoController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+    [Route("api/photos")]
+    public class PhotoController : BaseController
     {
-        _logger = logger;
-        _mediator = mediator;
-        _environment = environment;
-    }
+        private readonly ILogger<DogsController> _logger;
+        private readonly IMediator _mediator;
+        private readonly IWebHostEnvironment _environment;
 
-    [HttpPost]
-    public async Task<IActionResult> AddPhoto([FromForm] int dogId, IFormFile photo, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+        public PhotoController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
         {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            _logger = logger;
+            _mediator = mediator;
+            _environment = environment;
         }
 
-        // AddPhoto
-        AddPhotosResponse response;
-        using (var photoStream = photo.OpenReadStream())
+        [HttpPost]
+        public async Task<IActionResult> AddPhoto([FromForm] int dogId, IFormFile photo, CancellationToken cancellationToken = default)
         {
-            var addPhotoCommand = new AddPhotoCommand
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
             {
-                DogId = dogId,
-                PhotoStream = photoStream,
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            // AddPhoto
+            AddPhotosResponse response;
+            using (System.IO.Stream photoStream = photo.OpenReadStream())
+            {
+                AddPhotoCommand addPhotoCommand = new()
+                {
+                    DogId = dogId,
+                    PhotoStream = photoStream,
+                    RootPath = _environment.WebRootPath,
+                    UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
+                };
+
+                AddPhotoCommandResult result = await _mediator.Send(addPhotoCommand, cancellationToken);
+                response = new AddPhotosResponse
+                {
+                    PhotoPath = result.PhotoPath
+                };
+            }
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePhoto([FromBody] DeletePhotoRequest request, CancellationToken cancellationToken = default)
+        {
+            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
+            {
+                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
+            }
+
+            DeletePhotoCommand query = new()
+            {
+                DogId = request.DogId,
+                PhotoPath = request.PhotoPath,
                 RootPath = _environment.WebRootPath,
                 UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 
-            var result = await _mediator.Send(addPhotoCommand, cancellationToken);
-            response = new AddPhotosResponse
-            {
-                PhotoPath = result.PhotoPath
-            };
+            _ = await _mediator.Send(query, cancellationToken);
+
+            return Ok();
         }
-
-        return Ok(response);
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeletePhoto([FromBody] DeletePhotoRequest request, CancellationToken cancellationToken = default)
-    {
-        if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-        {
-            return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-        }
-
-        var query = new DeletePhotoCommand
-        {
-            DogId = request.DogId,
-            PhotoPath = request.PhotoPath,
-            RootPath = _environment.WebRootPath,
-            UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
-        };
-
-        await _mediator.Send(query, cancellationToken);
-
-        return Ok();
     }
 }

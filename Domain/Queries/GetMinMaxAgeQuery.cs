@@ -16,7 +16,7 @@ namespace Domain.Queries;
 
 public class GetMinMaxAgeQuery : IRequest<GetMinMaxAgeQueryResult>
 {
-
+    
 }
 
 public class GetMinMaxAgeQueryResult

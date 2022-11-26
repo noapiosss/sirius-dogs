@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,36 +9,37 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Queries;
-
-public class GetDogByIdQuery : IRequest<GetDogByIdQueryResult>
+namespace Domain.Queries
 {
-    public int DogId { get; init; }
-}
-
-public class GetDogByIdQueryResult
-{
-    public Dog Dog { get; init; }
-}
-
-internal class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, GetDogByIdQueryResult>
-{
-    private readonly DogesDbContext _dbContext;
-
-
-    public GetDogByIdQueryHandler(DogesDbContext dbContext)
+    public class GetDogByIdQuery : IRequest<GetDogByIdQueryResult>
     {
-        _dbContext = dbContext;
+        public int DogId { get; init; }
     }
-    public async Task<GetDogByIdQueryResult> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
-    {
-        var dog = await _dbContext.Doges
-            .Include(d => d.Photos)
-            .FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
-        return new GetDogByIdQueryResult
+    public class GetDogByIdQueryResult
+    {
+        public Dog Dog { get; init; }
+    }
+
+    internal class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, GetDogByIdQueryResult>
+    {
+        private readonly DogesDbContext _dbContext;
+
+
+        public GetDogByIdQueryHandler(DogesDbContext dbContext)
         {
-            Dog = dog
-        };
+            _dbContext = dbContext;
+        }
+        public async Task<GetDogByIdQueryResult> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
+        {
+            Dog dog = await _dbContext.Doges
+                .Include(d => d.Photos)
+                .FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+
+            return new GetDogByIdQueryResult
+            {
+                Dog = dog
+            };
+        }
     }
 }
