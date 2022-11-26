@@ -1,8 +1,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -10,9 +12,9 @@ namespace Api.Services;
 
 public class InitService : IHostedService
 {
-    private ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBotClient;
     private readonly IOptionsMonitor<BotConfiguration> _botConfiguration;
-    public InitService (ITelegramBotClient telegramBotClient, IOptionsMonitor<BotConfiguration> botConfiguration)
+    public InitService(ITelegramBotClient telegramBotClient, IOptionsMonitor<BotConfiguration> botConfiguration)
     {
         _telegramBotClient = telegramBotClient;
         _botConfiguration = botConfiguration;

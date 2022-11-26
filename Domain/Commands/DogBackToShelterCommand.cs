@@ -1,9 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Domain.Database;
+
 using MediatR;
-using System.IO;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Commands;
 
@@ -28,9 +31,9 @@ internal class DogBackToShelterCommandHandler : IRequestHandler<DogBackToShelter
     public async Task<DogBackToShelterCommandResult> Handle(DogBackToShelterCommand request, CancellationToken cancellationToken = default)
     {
         var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-        
+
         dog.WentHome = false;
-        
+
         _dbContext.Doges.Update(dog);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

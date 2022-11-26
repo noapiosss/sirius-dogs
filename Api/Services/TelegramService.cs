@@ -7,7 +7,9 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Contracts.Http;
+
 using Domain.Queries;
 
 using MediatR;
@@ -49,13 +51,13 @@ public class TelegramService : ITelegramService
 
             if (update.Message.Text.Equals("/ShowAllDogs"))
             {
-                var query = new GetAllDogsQuery{};
+                var query = new GetAllDogsQuery { };
                 var response = await _mediator.Send(query, cancellationToken);
                 var result = response.Dogs;
 
                 foreach (var dog in result)
                 {
-                    var message = $"Name: {dog.Name}\n" + 
+                    var message = $"Name: {dog.Name}\n" +
                         $"Breed: {dog.Breed}\n" +
                         $"Size: {dog.Size}\n" +
                         $"Age: {dog.BirthDate.Year}\n" +
@@ -65,7 +67,7 @@ public class TelegramService : ITelegramService
                         $"Last update: {dog.LastUpdate}";
 
                     using (Stream stream = System.IO.File.OpenRead($"./wwwroot{dog.TitlePhoto}"))
-                    {                    
+                    {
                         await _telegramBotClient.SendPhotoAsync(chatId,
                             photo: new InputOnlineFile(content: stream, fileName: "Title photo"),
                             caption: message);
@@ -77,11 +79,11 @@ public class TelegramService : ITelegramService
             if (update.Message.Text.Contains("/GetDogById"))
             {
                 var dogId = Int32.Parse(update.Message.Text.Split(" ", 2)[1]);
-                var query = new GetDogByIdQuery{DogId = dogId};
+                var query = new GetDogByIdQuery { DogId = dogId };
                 var response = await _mediator.Send(query, cancellationToken);
                 var dog = response.Dog;
-                
-                var message = $"Name: {dog.Name}\n" + 
+
+                var message = $"Name: {dog.Name}\n" +
                     $"Breed: {dog.Breed}\n" +
                     $"Size: {dog.Size}\n" +
                     $"Age: {dog.BirthDate}\n" +
@@ -106,12 +108,12 @@ public class TelegramService : ITelegramService
                 }
 
                 media[0].Caption = message;
-                
+
                 await _telegramBotClient.SendMediaGroupAsync(chatId,
                     media: media,
                     cancellationToken: cancellationToken);
 
-                foreach(var stream in streamList)
+                foreach (var stream in streamList)
                 {
                     stream.Close();
                 }
@@ -138,10 +140,10 @@ public class TelegramService : ITelegramService
                     await _telegramBotClient.SendTextMessageAsync(chatId, "Dogs not found", cancellationToken: cancellationToken);
                     return;
                 }
-                
+
                 foreach (var dog in dogs)
                 {
-                    var message = $"Name: {dog.Name}\n" + 
+                    var message = $"Name: {dog.Name}\n" +
                         $"Breed: {dog.Breed}\n" +
                         $"Size: {dog.Size}\n" +
                         $"Age: {dog.BirthDate}\n" +
@@ -166,12 +168,12 @@ public class TelegramService : ITelegramService
                     }
 
                     media[0].Caption = message;
-                    
+
                     await _telegramBotClient.SendMediaGroupAsync(chatId,
                         media: media,
                         cancellationToken: cancellationToken);
 
-                    foreach(var stream in streamList)
+                    foreach (var stream in streamList)
                     {
                         stream.Close();
                     }
@@ -180,6 +182,6 @@ public class TelegramService : ITelegramService
                 return;
             }
         }
-        
+
     }
 }

@@ -30,7 +30,7 @@ public class Dog
 
     [Column("row")]
     public int Row { get; set; }
-    
+
     [Column("enclosure")]
     public int Enclosure { get; set; }
 
@@ -42,9 +42,9 @@ public class Dog
 
     [Column("last_update")]
     public DateTime LastUpdate { get; set; }
-    
+
     [Column("updated_by")]
     public String UpdatedBy { get; set; }
-    public ICollection<Image> Photos { get; set; } 
+    public ICollection<Image> Photos { get; set; }
 
 }

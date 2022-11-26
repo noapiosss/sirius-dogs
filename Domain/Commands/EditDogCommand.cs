@@ -1,10 +1,14 @@
 using System;
-using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Contracts.Database;
+
 using Domain.Database;
+
 using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Commands;
 
@@ -36,7 +40,7 @@ internal class EditDogCommandHandler : IRequestHandler<EditDogCommand, EditDogCo
                 EditingIsSuccessful = false
             };
         }
-        
+
         var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.Dog.Id, cancellationToken);
         dog.Name = request.Dog.Name;
         dog.Breed = request.Dog.Breed;

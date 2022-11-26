@@ -2,8 +2,11 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Contracts.Database;
+
 using Domain.Database;
+
 using MediatR;
 
 namespace Domain.Commands;
@@ -51,11 +54,11 @@ internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogComma
             LastUpdate = DateTime.UtcNow,
             UpdatedBy = request.UpdatedBy
         };
-        
+
         await _dbContext.AddAsync(dog, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        
-        Directory.CreateDirectory($"{request.RootPath}\\images\\{dog.Id}");            
+
+        Directory.CreateDirectory($"{request.RootPath}\\images\\{dog.Id}");
 
         return new AddDogCommandResult
         {

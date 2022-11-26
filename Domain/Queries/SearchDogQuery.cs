@@ -1,15 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Contracts.Database;
+
+using Domain.Database;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
-
-using Contracts.Database;
-using Domain.Database;
-using System;
 
 namespace Domain.Queries;
 
@@ -46,15 +47,15 @@ internal class SearchDogQueryHandler : IRequestHandler<SearchDogQuery, SearchDog
             .Where(d => d.WentHome == request.WentHome &&
                 d.BirthDate.Date >= minBirthDate.Date &&
                 (request.Row == 0 || d.Row == request.Row) &&
-                (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&                    
+                (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
                 (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
                 EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
-                EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") || 
+                EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
                 EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
             .Include(d => d.Photos)
             .OrderByDescending(d => d.Id)
             .ToListAsync(cancellationToken);
-        
+
         return new SearchDogQueryResult
         {
             Dogs = dogs

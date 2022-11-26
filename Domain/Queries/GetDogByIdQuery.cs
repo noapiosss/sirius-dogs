@@ -3,12 +3,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Contracts.Database;
+
+using Domain.Database;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
-
-using Contracts.Database;
-using Domain.Database;
 
 namespace Domain.Queries;
 

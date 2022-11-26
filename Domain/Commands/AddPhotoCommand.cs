@@ -1,15 +1,16 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Contracts.Database;
+
+using Domain.Database;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
-
-using Domain.Database;
-using System.IO;
-using Contracts.Database;
-using System.Linq;
-using System;
 
 namespace Domain.Commands;
 
@@ -73,17 +74,17 @@ internal class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, AddPhot
                 lastPhotoIndex = photoIndex;
             }
         }
-        
-        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\{lastPhotoIndex+1}.jpg", FileMode.Create))
+
+        using (var fileStream = new FileStream($"{request.RootPath}\\images\\{request.DogId}\\{lastPhotoIndex + 1}.jpg", FileMode.Create))
         {
             request.PhotoStream.Seek(0, SeekOrigin.Begin);
             request.PhotoStream.CopyTo(fileStream);
         }
-        
+
         var image = new Image
         {
             DogId = request.DogId,
-            PhotoPath = $"/images/{request.DogId}/{lastPhotoIndex+1}.jpg"
+            PhotoPath = $"/images/{request.DogId}/{lastPhotoIndex + 1}.jpg"
         };
 
         await _dbContext.AddAsync(image, cancellationToken);

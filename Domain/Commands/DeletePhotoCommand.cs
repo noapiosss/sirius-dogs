@@ -1,15 +1,16 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Contracts.Database;
+
+using Domain.Database;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
-
-using Domain.Database;
-using System.IO;
-using Contracts.Database;
-using System.Linq;
-using System;
 
 namespace Domain.Commands;
 
@@ -37,11 +38,11 @@ internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, D
     public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
     {
         var photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
-        
+
         _dbContext.Remove(photo);
         _dbContext.SaveChanges();
 
-        File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/","\\")}");
+        File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/", "\\")}");
 
         var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
         dog.LastUpdate = DateTime.UtcNow;
@@ -49,7 +50,7 @@ internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, D
 
         _dbContext.Doges.Update(dog);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        
+
         return new DeletePhotoCommandResult
         {
             PhotoIsDeleted = true

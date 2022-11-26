@@ -1,22 +1,27 @@
+using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Api.Models;
-using Microsoft.Extensions.Logging;
-using MediatR;
-using System.Threading.Tasks;
-using System.Threading;
-using Domain.Queries;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Api.Models;
+
 using Contracts.Database;
 using Contracts.Http;
+
 using Domain.Commands;
-using System.IO;
-using Microsoft.AspNetCore.Http;
+using Domain.Queries;
+
+using MediatR;
+
 using Microsoft.AspNetCore;
-using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.AspNetCore.Hosting;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers;
 
@@ -37,8 +42,8 @@ public class MinMaxAgeController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetMinMaxAge(CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(new GetMinMaxAgeQuery{}, cancellationToken);
+        var result = await _mediator.Send(new GetMinMaxAgeQuery { }, cancellationToken);
 
         return Ok(result);
-    } 
+    }
 }

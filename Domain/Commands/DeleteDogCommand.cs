@@ -1,9 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Domain.Database;
+
 using MediatR;
-using System.IO;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Commands;
 
@@ -29,7 +32,7 @@ internal class DeleteDogCommandHandler : IRequestHandler<DeleteDogCommand, Delet
     public async Task<DeleteDogCommandResult> Handle(DeleteDogCommand request, CancellationToken cancellationToken = default)
     {
         var dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-        
+
         Directory.Delete($"{request.RootPath}\\images\\{request.DogId}", true);
 
         _dbContext.Doges.Attach(dog);

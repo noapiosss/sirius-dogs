@@ -1,11 +1,12 @@
 using Contracts.Database;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Database;
 
 public class DogesDbContext : DbContext
 {
-    public DbSet<Dog> Doges { get; init; } 
+    public DbSet<Dog> Doges { get; init; }
     public DbSet<Image> Images { get; init; }
 
     public DogesDbContext() : base()
@@ -13,7 +14,7 @@ public class DogesDbContext : DbContext
     }
 
     public DogesDbContext(DbContextOptions<DogesDbContext> options) : base(options)
-    {        
+    {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

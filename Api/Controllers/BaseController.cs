@@ -2,11 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Contracts.Http;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Npgsql;
-
-using Contracts.Http;
 
 namespace Api.Controllers;
 

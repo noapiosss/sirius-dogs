@@ -1,13 +1,13 @@
+using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Domain.Database;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
-
-using Domain.Database;
-using System.IO;
-using System;
 
 public class AddTitlePhotoCommand : IRequest<AddTitlePhotoCommandResult>
 {
@@ -46,7 +46,7 @@ internal class AddTitlePhotoCommandHandler : IRequestHandler<AddTitlePhotoComman
             request.TitlePhotoStream.Seek(0, SeekOrigin.Begin);
             request.TitlePhotoStream.CopyTo(fileStream);
         }
-        
+
         dog.LastUpdate = DateTime.UtcNow;
         dog.UpdatedBy = request.UpdatedBy;
 

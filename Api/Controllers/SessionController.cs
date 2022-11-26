@@ -1,17 +1,19 @@
+using System;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Api.Models;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System.Threading;
+using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Api.Models;
+
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers;
 
@@ -38,18 +40,18 @@ public class SessionController : Controller
         }
 
         string passwordSHA256;
-        using (SHA256 sha256Hash = SHA256.Create())  
-        {  
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
             // ComputeHash - returns byte array  
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));  
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
 
             // Convert byte array to a string   
-            StringBuilder builder = new StringBuilder();  
-            for (int i = 0; i < bytes.Length; i++)  
-            {  
-                builder.Append(bytes[i].ToString("x2"));  
-            }  
-            passwordSHA256 = builder.ToString();  
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            passwordSHA256 = builder.ToString();
         }
 
         if (passwordSHA256 == "68e3262d9d6c110ccdd18e51efc90923fca0d38262095e129b538bafc367981f")

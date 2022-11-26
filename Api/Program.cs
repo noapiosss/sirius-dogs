@@ -1,16 +1,18 @@
+using Api;
+using Api.Configuration;
+using Api.Services;
+
+using Domain;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-using Api.Configuration;
-using Domain;
 using Telegram.Bot;
-using Api;
-using Api.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +37,7 @@ builder.Services.AddDomainServices((sp, options) =>
 });
 
 builder.Services.AddHttpClient("tgclient")
-    .AddTypedClient<ITelegramBotClient>((client, sp) => 
+    .AddTypedClient<ITelegramBotClient>((client, sp) =>
     {
         var configuration = sp.GetRequiredService<IOptionsMonitor<BotConfiguration>>();
         return new TelegramBotClient(configuration.CurrentValue.BotAccessToken, client);

@@ -27,6 +27,6 @@ public abstract class Helper<TModel> : RazorPage<TModel>
     {
         if (number % 100 == 11) return true;
         if (number % 10 == 1) return false;
-        return true; 
+        return true;
     }
 }

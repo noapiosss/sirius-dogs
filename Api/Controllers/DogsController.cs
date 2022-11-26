@@ -1,22 +1,27 @@
+using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Api.Models;
-using Microsoft.Extensions.Logging;
-using MediatR;
-using System.Threading.Tasks;
-using System.Threading;
-using Domain.Queries;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Api.Models;
+
 using Contracts.Database;
 using Contracts.Http;
+
 using Domain.Commands;
-using System.IO;
-using Microsoft.AspNetCore.Http;
+using Domain.Queries;
+
+using MediatR;
+
 using Microsoft.AspNetCore;
-using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.AspNetCore.Hosting;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers;
 
@@ -39,16 +44,16 @@ public class DogsController : Controller
     }
     public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
     {
-        var query = new GetShelterDogsQuery{};
+        var query = new GetShelterDogsQuery { };
         var result = await _mediator.Send(query, cancellationToken);
-        
+
         return View("Index", result.Dogs);
     }
     public async Task<IActionResult> Home(CancellationToken cancellationToken = default)
     {
-        var query = new GetHomeDogsQuery{};
+        var query = new GetHomeDogsQuery { };
         var result = await _mediator.Send(query, cancellationToken);
-        
+
         return View("Index", result.Dogs);
     }
 
@@ -65,12 +70,12 @@ public class DogsController : Controller
         };
 
         var result = await _mediator.Send(query, cancellationToken);
-        
+
         return View(result.Dogs);
     }
 
     public IActionResult Create()
-    {        
+    {
         if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
         {
             return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
@@ -141,19 +146,19 @@ public class DogsController : Controller
                     await _mediator.Send(addPhotoCommand, cancellationToken);
                 }
             }
-        }        
-        
+        }
+
         return RedirectToAction(nameof(Index));
     }
-    
+
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
     {
         if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
         {
             return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
         }
-        
-        var query = new GetDogByIdQuery{DogId = id};
+
+        var query = new GetDogByIdQuery { DogId = id };
         var result = await _mediator.Send(query, cancellationToken);
         return View(result.Dog);
     }
@@ -178,7 +183,7 @@ public class DogsController : Controller
 
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
     {
-        var query = new GetDogByIdQuery{DogId = id};
+        var query = new GetDogByIdQuery { DogId = id };
         var result = await _mediator.Send(query, cancellationToken);
         return View(result.Dog);
     }
@@ -197,7 +202,7 @@ public class DogsController : Controller
         }
 
         dog.Id = id;
-        var command = new EditDogCommand{ Dog = dog };
+        var command = new EditDogCommand { Dog = dog };
         await _mediator.Send(command, cancellationToken);
 
         // ChangeTitlePhoto
@@ -235,11 +240,11 @@ public class DogsController : Controller
                     await _mediator.Send(addPhotoCommand, cancellationToken);
                 }
             }
-        }        
+        }
 
         return RedirectToAction(nameof(Index));
     }
-    
+
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
     {
         if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
@@ -247,15 +252,15 @@ public class DogsController : Controller
             return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
         }
 
-        var query = new GetDogByIdQuery{DogId = id};
+        var query = new GetDogByIdQuery { DogId = id };
         var result = await _mediator.Send(query, cancellationToken);
         result.Dog.BirthDate = result.Dog.BirthDate.ToLocalTime();
         return View(result.Dog);
-    }    
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    } 
+    }
 }

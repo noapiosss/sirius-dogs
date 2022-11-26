@@ -1,13 +1,13 @@
 using System;
 
+using Domain.Commands;
+using Domain.Database;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-using Domain.Commands;
-using Domain.Database;
 
 namespace Domain;
 

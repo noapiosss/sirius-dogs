@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+
 using Api.Models;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers;
