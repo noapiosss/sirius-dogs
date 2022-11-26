@@ -36,7 +36,7 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
-            DogWentHomeCommand wentHomeCommand = new DogWentHomeCommand
+            DogWentHomeCommand wentHomeCommand = new()
             {
                 DogId = dogId
             };
@@ -54,7 +54,7 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
-            DogBackToShelterCommand backToShelterCommand = new DogBackToShelterCommand
+            DogBackToShelterCommand backToShelterCommand = new()
             {
                 DogId = dogId
             };
