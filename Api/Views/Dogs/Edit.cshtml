@@ -5,10 +5,8 @@
     Layout = "_Layout";
 }
 
-<h1>Edit</h1>
+<h1>@Model.Name</h1>
 
-<h4>@Html.DisplayFor(model => model.Name)</h4>
-<h6>@Html.DisplayFor(model => model.Id)</h6>
 <hr />
 <div class="row">    
     <form asp-action="Edit" enctype="multipart/form-data">
@@ -152,9 +150,10 @@
 </div>
 
 <div>    
-    <a asp-action="Index">Back to List</a>
+    <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to list</button>
 </div>
 
+<script src="~/js/edit-page.js"></script>
 <script src="~/js/text-area-growth.js"></script>
 <script src="~/js/photo-manager.js" type="module"></script>
 <script src="~/js/cropper/cropper.js" type="module"></script>

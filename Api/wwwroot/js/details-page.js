@@ -2,11 +2,11 @@ const statusBtn = document.getElementById("status-button");
 const editBtn = document.getElementById("edit-button");
 const backToListBtn = document.getElementById("back-to-list-button");
 
-editBtn.onclick = () => { window.location.href = `${window.location.origin}/Dogs/Edit/${statusBtn.getAttribute("dogId")}` }
+editBtn.onclick = () => { window.location.href = `${window.location.origin}/Dogs/Edit/${editBtn.getAttribute("dogId")}` }
 
 backToListBtn.onclick = () => 
 {
-    if (statusBtn.className === "btn btn-danger")
+    if (backToListBtn.getAttribute("wentHome"))
     {
         window.location.href = `${window.location.origin}/Dogs/Home`;
     }

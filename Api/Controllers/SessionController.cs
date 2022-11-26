@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 
 namespace Api.Controllers;
 
@@ -69,7 +70,7 @@ public class SessionController : Controller
 
             if (Request.Headers["Referer"].ToString().Split('?').Length == 1)
             {
-                return RedirectToAction("Index", "Dogs");
+                return RedirectToAction("Shelter", "Dogs");
             }
 
             return Redirect($"{Request.Headers["Origin"].ToString()}{Request.Headers["Referer"].ToString().Split('?')[1]}");
@@ -81,8 +82,12 @@ public class SessionController : Controller
     public async Task<IActionResult> Signout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Index", "Dogs");
+        return RedirectToAction("Shelter", "Dogs");
     }
+
+    [HttpGet("username")]
+    public string GetSessionUsername(CancellationToken cancellationToken) =>
+            HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

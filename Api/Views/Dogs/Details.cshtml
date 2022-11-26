@@ -1,3 +1,4 @@
+@using System.Security.Claims
 @model Contracts.Database.Dog
 
 @{
@@ -7,27 +8,10 @@
 
 @inherits Helper<TModel>
 
-<h1>Details</h1>
+<h1>@Model.Name</h1>
 
 
-<table class="table">    
-    @* <thead>
-        <tr>
-            <th>
-               1
-            </th>
-            <th>
-                2
-            </th>
-            <th>
-                3
-            </th>
-            <th>
-                4
-            </th>
-            <th></th>
-        </tr>
-    </thead> *@
+<table class="table">
     <tbody>
         <td class="photos-cell">
             <div id="dogCarousel" class="carousel slide carousel-fade" data-mdb-ride="carousel">
@@ -58,8 +42,6 @@
         </td>
         <td>
             <div>
-                <h4>@Html.DisplayFor(model => model.Name)</h4>
-                <hr />
                 <dl class="row">
                     <dt class = "col-sm-2">
                         @Html.DisplayNameFor(model => model.Id)
@@ -121,16 +103,19 @@
                 </dl>
             </div>
             <div>
-                @if(Model.WentHome)
+                @if(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value != null)
                 {
-                    <button type="button" class="btn btn-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-success" id="status-button" dogId="@Model.Id">Went home</button>
+                    @if(Model.WentHome)
+                    {
+                        <button type="button" class="btn btn-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-success" id="status-button" dogId="@Model.Id">Went home</button>
+                    }
                 }
                 <button type="button" class="btn btn-warning" id="edit-button" dogId="@Model.Id">Edit</button>
-                <button type="button" class="btn btn-primary" id="back-to-list-button">Back to List</button>
+                <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
             </div>
         </td>
     </tbody>

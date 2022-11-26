@@ -122,9 +122,17 @@ public class TelegramService : ITelegramService
             if (update.Message.Text.Contains("/Search"))
             {
                 var searchRequest = update.Message.Text.Split(" ", 2)[1];
-                var query = new SearchDogQuery{SearchRequest = searchRequest};
+                var query = new SearchDogQuery
+                {
+                    SearchRequest = searchRequest,
+                    MaxAge = 1000,
+                    Row = 0,
+                    Enclosure = 0,
+                    WentHome = false
+                };
                 var response = await _mediator.Send(query, cancellationToken);
                 var dogs = response.Dogs;
+
                 if (dogs.Count == 0)
                 {
                     await _telegramBotClient.SendTextMessageAsync(chatId, "Dogs not found", cancellationToken: cancellationToken);
