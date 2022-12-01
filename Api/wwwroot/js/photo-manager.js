@@ -3,7 +3,7 @@ import Cropper from "./cropper/cropper.esm.js";
 const titlePhotoInput = document.getElementById("title-photo-input");
 const allPhotos = document.getElementById("all-photos-input");
 
-let croppedPhotoInput = document.getElementById("cropped-image");
+let croppedPhotoInput = document.getElementById("cropped-image-input");
 
 allPhotos.onchange = () =>
 {
@@ -131,44 +131,10 @@ titlePhotoInput.onchange = function getImgData()
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(croppedPhotoFile);
             croppedPhotoInput.files = dataTransfer.files;
+
+            if (document.getElementById("edit-title-photo") !== null) document.getElementById("edit-title-photo").src = imgCropped.src;
+            
             document.getElementById("close-cropped-image-modal").click();
         }
     });      
 }
-
-const allDeleteBtns = document.querySelectorAll("[id='delete-photo-btn']");
-
-allDeleteBtns.forEach(btn => {
-    btn.onclick = async () =>
-    {
-        const delIsSubmited = confirm("Are you sure, that you wanna delete this photo?");
-        if (!delIsSubmited) return;
-
-        const photoForDelete = 
-        {
-            dogId: `${btn.dataset.dogId}`,
-            photoPath: `${btn.dataset.photoPath}`
-        };
-        await fetch(`${window.location.origin}/api/photos`,{
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(photoForDelete)
-        });
-        btn.parentElement.remove();
-    }
-});
-
-const addPhotoButton = document.getElementById("add-photo-container");
-
-addPhotoButton.addEventListener("mouseenter", () => {
-    document.getElementById("add-photo-svg").setAttribute("fill", "black");
-    document.getElementById("add-photo-container").style.borderColor = "black";
-});
-
-addPhotoButton.addEventListener("mouseleave", () => {
-    document.getElementById("add-photo-svg").setAttribute("fill", "gray");
-    document.getElementById("add-photo-container").style.borderColor = "rgb(194, 194, 194)";
-});

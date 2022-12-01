@@ -2,8 +2,6 @@ const statusBtn = document.getElementById("status-button");
 const editBtn = document.getElementById("edit-button");
 const backToListBtn = document.getElementById("back-to-list-button");
 
-editBtn.onclick = () => { window.location.href = `${window.location.origin}/Dogs/Edit/${editBtn.getAttribute("dogId")}` }
-
 backToListBtn.onclick = () => 
 {
     if (backToListBtn.getAttribute("wentHome"))
@@ -38,3 +36,5 @@ statusBtn.onclick = async () =>
         })
     }
 }
+
+editBtn.onclick = () => { window.location.href = `${window.location.origin}/Dogs/Edit/${editBtn.getAttribute("dogId")}` }

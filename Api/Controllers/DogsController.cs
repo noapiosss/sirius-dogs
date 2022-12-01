@@ -232,7 +232,8 @@ namespace Api.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(Index));
+            bool dogWentHome = (await _mediator.Send(new GetDogByIdQuery { DogId = dog.Id }, cancellationToken)).Dog.WentHome;
+            return dogWentHome ? RedirectToAction(nameof(Home)) : RedirectToAction(nameof(Shelter));
         }
 
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)

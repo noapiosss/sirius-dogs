@@ -49,10 +49,12 @@
             </div>
 
             <div class="form-group" id="form-group-title-photo">
-                <label asp-for="TitlePhoto" class="control-label">Title photo</label>             
-                <input type="file" name="croppedImage" id="cropped-image" class="form-control-file" hidden/>
+                <label asp-for="TitlePhoto" class="control-label">Title photo</label> <br>
+                <img class="edit-title-photo" id="edit-title-photo" src=@Model.TitlePhoto>      
+                <input type="file" name="croppedImage" id="cropped-image-input" class="form-control-file" hidden/>
                 <span asp-validation-for="TitlePhoto" class="text-danger"></span>                
             </div>
+            <br>
             
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#titleBackdrop">
