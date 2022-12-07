@@ -7,12 +7,6 @@
 
 @inherits Helper<TModel>
 
-<h1>Dogs</h1>
-
-<p>
-    <a asp-action="Create">Add new dog</a>
-</p>
-
 <form asp-action="Index" method="get">
     
     <div class="search-from form-group" id="search-form">
@@ -55,7 +49,7 @@
         <div class="col"> 
             <div class="card">
 
-                @{string imagePath = $"/images/{Model[i].Id}/Title.jpg";}
+                @{string imagePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model[i].Id}/{Model[i].TitlePhoto}";}
                 <a href="/Dogs/Details/@Model[i].Id">
                     <img  src=@imagePath class="card-img-top" alt="...">
                 </a>

@@ -1,6 +1,6 @@
 @using System.Security.Claims
 @model Contracts.Database.Dog
-
+    
 @{
     ViewData["Title"] = "Details";
     Layout = "_Layout";
@@ -18,13 +18,15 @@
                 <div class="carousel-inner">
 
                     <div class="carousel-item active">
-                        <img src="@Html.DisplayFor(model => model.TitlePhoto)" class="carousel-img">
+                        @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
+                        <img src=@titlePath class="carousel-img">
                     </div>
 
                     @foreach (var photo in Model.Photos)
                     {
                         <div class="carousel-item">
-                            <img src="@photo.PhotoPath.ToString()" class="carousel-img">
+                            @{string photoPath = $"https://storage.cloud.google.com/sirius_dogs_test/{Model.Id}/{photo.PhotoPath}";}
+                            <img src=@photoPath class="carousel-img">
                         </div>
                     }
 
@@ -101,15 +103,16 @@
                 {
                     @if(Model.WentHome)
                     {
-                        <button type="button" class="btn btn-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
+                        <button type="button" class="btn btn-outline-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-success" id="status-button" dogId="@Model.Id">Went home</button>
+                        <button type="button" class="btn btn-outline-success" id="status-button" dogId="@Model.Id">Went home</button>
                     }
-                    <button type="button" class="btn btn-warning" id="edit-button" dogId="@Model.Id">Edit</button>
+                    <button type="button" class="btn btn-outline-warning" id="edit-button" dogId="@Model.Id">Edit</button>
+                    <button type="button" class="btn btn-outline-danger" id="delete-button" dogId="@Model.Id">Delete</button>
                 }
-                <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
+                <button type="button" class="btn btn-outline-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
             </div>
         </td>
     </tbody>

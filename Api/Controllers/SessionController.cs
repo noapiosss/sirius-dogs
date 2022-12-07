@@ -60,9 +60,9 @@ namespace Api.Controllers
                 new Claim(ClaimTypes.Name, username)
             };
 
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                AuthenticationProperties authProperties = new AuthenticationProperties();
+                ClaimsIdentity claimsIdentity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                ClaimsPrincipal claimsPrincipal = new(claimsIdentity);
+                AuthenticationProperties authProperties = new();
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Domain.Migrations
 {
     [DbContext(typeof(DogesDbContext))]
-    [Migration("20221111152713_DogsUpdatedBy")]
-    partial class DogsUpdatedBy
+    [Migration("20221204153354_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,6 +72,10 @@ namespace Domain.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text")
                         .HasColumnName("updated_by");
+
+                    b.Property<bool>("WentHome")
+                        .HasColumnType("boolean")
+                        .HasColumnName("went_home");
 
                     b.HasKey("Id");
 

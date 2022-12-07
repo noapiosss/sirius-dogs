@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain
 {
-    public static class TwitterCloneDomainExtensions
+    public static class SiriusDogsDomainExtensions
     {
         public static IServiceCollection AddDomainServices(this IServiceCollection services,
             Action<IServiceProvider, DbContextOptionsBuilder> dbOptionsAction)

@@ -1,9 +1,9 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Domain.Database;
+using Contracts.Database;
 
 using MediatR;
 
@@ -15,7 +15,6 @@ namespace Domain.Commands
     {
         public int DogId { get; init; }
         public string PhotoPath { get; init; }
-        public string RootPath { get; init; }
         public string UpdatedBy { get; init; }
     }
 
@@ -34,14 +33,12 @@ namespace Domain.Commands
         }
         public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
         {
-            Contracts.Database.Image photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
+            Image photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
 
             _ = _dbContext.Remove(photo);
             _ = _dbContext.SaveChanges();
 
-            File.Delete($"{request.RootPath}{request.PhotoPath.Replace("/", "\\")}");
-
-            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+            Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
             dog.LastUpdate = DateTime.UtcNow;
             dog.UpdatedBy = request.UpdatedBy;
 

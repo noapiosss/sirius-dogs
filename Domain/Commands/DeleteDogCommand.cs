@@ -1,8 +1,8 @@
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Domain.Database;
+using Contracts.Database;
 
 using MediatR;
 
@@ -13,7 +13,6 @@ namespace Domain.Commands
     public class DeleteDogCommand : IRequest<DeleteDogCommandResult>
     {
         public int DogId { get; init; }
-        public string RootPath { get; init; }
     }
 
     public class DeleteDogCommandResult
@@ -31,9 +30,7 @@ namespace Domain.Commands
         }
         public async Task<DeleteDogCommandResult> Handle(DeleteDogCommand request, CancellationToken cancellationToken = default)
         {
-            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-
-            Directory.Delete($"{request.RootPath}\\images\\{request.DogId}", true);
+            Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
             _ = _dbContext.Doges.Attach(dog);
             _ = _dbContext.Doges.Remove(dog);

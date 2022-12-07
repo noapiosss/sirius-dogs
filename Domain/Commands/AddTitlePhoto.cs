@@ -1,9 +1,9 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Domain.Database;
+using Contracts.Database;
 
 using MediatR;
 
@@ -14,14 +14,13 @@ namespace Domain.Commands
     public class AddTitlePhotoCommand : IRequest<AddTitlePhotoCommandResult>
     {
         public int DogId { get; init; }
-        public Stream TitlePhotoStream { get; init; }
-        public string RootPath { get; init; }
+        public string PhotoUrl { get; init; }
         public string UpdatedBy { get; init; }
     }
 
     public class AddTitlePhotoCommandResult
     {
-        public bool TitlePhotoIsAdded { get; init; }
+        public string PhotoUrl { get; init; }
     }
 
     internal class AddTitlePhotoCommandHandler : IRequestHandler<AddTitlePhotoCommand, AddTitlePhotoCommandResult>
@@ -34,21 +33,9 @@ namespace Domain.Commands
         }
         public async Task<AddTitlePhotoCommandResult> Handle(AddTitlePhotoCommand request, CancellationToken cancellationToken = default)
         {
-            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-            dog.TitlePhoto = $"/images/{request.DogId}/Title.jpg";
-            _ = await _dbContext.SaveChangesAsync(cancellationToken);
+            Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
-            if (File.Exists($"{request.RootPath}\\images\\{request.DogId}\\Title.jpg"))
-            {
-                File.Delete($"{request.RootPath}\\images\\{request.DogId}\\Title.jpg");
-            }
-
-            using (FileStream fileStream = new($"{request.RootPath}\\images\\{request.DogId}\\Title.jpg", FileMode.Create))
-            {
-                _ = request.TitlePhotoStream.Seek(0, SeekOrigin.Begin);
-                request.TitlePhotoStream.CopyTo(fileStream);
-            }
-
+            dog.TitlePhoto = request.PhotoUrl;
             dog.LastUpdate = DateTime.UtcNow;
             dog.UpdatedBy = request.UpdatedBy;
 
@@ -57,7 +44,7 @@ namespace Domain.Commands
 
             return new AddTitlePhotoCommandResult
             {
-                TitlePhotoIsAdded = true
+                PhotoUrl = request.PhotoUrl
             };
         }
     }

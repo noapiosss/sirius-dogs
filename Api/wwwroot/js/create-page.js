@@ -2,6 +2,12 @@ import Cropper from "./cropper/cropper.esm.js";
 
 const titlePhotoInput = document.getElementById("title-photo-input");
 const allPhotos = document.getElementById("all-photos-input");
+const backToListBtn = document.getElementById("back-to-list-btn");
+
+backToListBtn.onclick = () =>
+{
+    window.location.href = `${window.location.origin}/Dogs/Shelter`;
+}
 
 let croppedPhotoInput = document.getElementById("cropped-image-input");
 
@@ -22,65 +28,6 @@ allPhotos.onchange = () =>
 document.getElementById("submit-all-photos").onclick = async () =>
 {
     document.getElementById("all-photos").files = allPhotos.files;
-    
-    for (const photo of allPhotos.files)
-    {
-        const dogId = window.location.href.split('/')[window.location.href.split('/').length - 1];
-        let dataToSend = new FormData();
-        dataToSend.append("dogId", dogId);
-        dataToSend.append("photo", photo);
-
-        const newPhotoPath = await fetch(`${window.location.origin}/api/photos`,{
-            method: 'POST',
-            body: dataToSend
-        })
-            .then(response => response.json())
-            .then(result => result.photoPath);
-
-        console.log(newPhotoPath);
-
-        const newPhotoContainer = document.createElement("div");
-        newPhotoContainer.className = "photo-container";
-
-        const newPhoto = document.createElement("img");
-        newPhoto.className = "dog-photo-img";
-        newPhoto.src = newPhotoPath;
-        newPhotoContainer.appendChild(newPhoto);
-
-        const newDeleteBtn = document.createElement("div");
-        newDeleteBtn.className = "delete-photo-btn";
-        newDeleteBtn.innerHTML = "[ delete ]";
-        newDeleteBtn.onclick = async () => 
-        {
-            const delIsSubmited = confirm("Are you sure, that you wanna delete this photo?");
-            if (!delIsSubmited) return;
-
-            const photoForDelete = 
-            {
-                dogId: dogId,
-                photoPath: newPhotoPath
-            };
-            await fetch(`${window.location.origin}/api/photos`,{
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(photoForDelete)
-            });
-            newDeleteBtn.parentElement.remove();
-        }
-
-        const newPhotoControlContainer = document.createElement("div");
-        newPhotoControlContainer.className = "photo-control-container";
-
-        newPhotoControlContainer.appendChild(newPhotoContainer);
-        newPhotoControlContainer.appendChild(newDeleteBtn);
-
-        const addPhotoControlContainer = document.getElementById("add-photo-control-container");
-        addPhotoControlContainer.parentNode.insertBefore(newPhotoControlContainer, addPhotoControlContainer);
-    };
-
     document.getElementById("close-all-photos-modal").click();
 }
 

@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Api.Services.Interfaces;
 
 using Contracts.Http;
 
@@ -22,12 +25,14 @@ namespace Api.Controllers
         private readonly ILogger<DogsController> _logger;
         private readonly IMediator _mediator;
         private readonly IWebHostEnvironment _environment;
+        private readonly ICloudStorage _googleStorage;
 
-        public PhotoController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+        public PhotoController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment, ICloudStorage googleStorage)
         {
             _logger = logger;
             _mediator = mediator;
             _environment = environment;
+            _googleStorage = googleStorage;
         }
 
         [HttpPost]
@@ -38,26 +43,18 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
-            // AddPhoto
-            AddPhotosResponse response;
-            using (System.IO.Stream photoStream = photo.OpenReadStream())
+            // test google bucket
+            string photoUrl = await _googleStorage.UploadFileAsync(photo, dogId.ToString(), Guid.NewGuid().ToString() + ".jpeg");
+
+            AddPhotoCommand command = new()
             {
-                AddPhotoCommand addPhotoCommand = new()
-                {
-                    DogId = dogId,
-                    PhotoStream = photoStream,
-                    RootPath = _environment.WebRootPath,
-                    UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
-                };
+                DogId = dogId,
+                PhotoUrl = photoUrl
+            };
 
-                AddPhotoCommandResult result = await _mediator.Send(addPhotoCommand, cancellationToken);
-                response = new AddPhotosResponse
-                {
-                    PhotoPath = result.PhotoPath
-                };
-            }
+            AddPhotoCommandResult response = await _mediator.Send(command, cancellationToken);
 
-            return Ok(response);
+            return Ok(photoUrl);
         }
 
         [HttpDelete]
@@ -68,11 +65,12 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
+            await _googleStorage.DeleteFileAsync(request.DogId.ToString(), request.PhotoUrl);
+
             DeletePhotoCommand query = new()
             {
                 DogId = request.DogId,
-                PhotoPath = request.PhotoPath,
-                RootPath = _environment.WebRootPath,
+                PhotoPath = request.PhotoUrl,
                 UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 

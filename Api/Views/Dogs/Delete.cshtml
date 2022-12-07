@@ -72,7 +72,10 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <button type="button" class="btn btn-primary" id="back-to-details-button" dogId="@Model.Id">Back to Details</button>
+        <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
     </form>
 </div>
+
+<script src="~/js/delete-page.js"></script>

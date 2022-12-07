@@ -13,7 +13,7 @@ html {
   min-height: 100%;
 }
 
-body {
+#body {
   margin-bottom: 60px;
 }
 
@@ -139,6 +139,10 @@ body {
   max-width: 100%;
 }
 
+.dog-photo-img:hover{
+  -webkit-filter: brightness(0.5);
+}
+
 .delete-photo-btn:hover{
   cursor: pointer;
   text-decoration: underline;
@@ -204,4 +208,32 @@ body {
 .filter-enclosure {
   padding: 10px;
   border-top: solid 1px rgb(224, 224, 224);
+}
+
+/* SIGN OUT */
+
+.session-info{
+  display: flex;
+}
+
+.username-info{
+  float: left;
+  color: white;
+  margin: auto;
+  margin-right: 10px;
+}
+
+.sign-in-link, .sign-out-link{
+  float: right;
+  padding: 5px;
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.sign-in-link:hover, .sign-out-link:hover{
+  cursor: pointer;
+  background-color: rgb(80, 138, 255);
+  color: white;
+  text-decoration: none;
 }

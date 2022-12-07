@@ -1,6 +1,12 @@
 const statusBtn = document.getElementById("status-button");
 const editBtn = document.getElementById("edit-button");
 const backToListBtn = document.getElementById("back-to-list-button");
+const deleteBtn = document.getElementById("delete-button");
+
+deleteBtn.onclick = () => 
+{
+    window.location.href = `${window.location.origin}/Dogs/Delete/${deleteBtn.getAttribute("dogId")}`;
+}
 
 backToListBtn.onclick = () => 
 {
@@ -16,12 +22,12 @@ backToListBtn.onclick = () =>
 
 statusBtn.onclick = async () =>
 {
-    if (statusBtn.className === "btn btn-danger")
+    if (statusBtn.className === "btn btn-outline-danger")
     {
         await fetch(`${window.location.origin}/api/${statusBtn.getAttribute("dogId")}/backtoshelter`, {
             method: 'POST'
         }).then(() => {
-            statusBtn.className = "btn btn-success";
+            statusBtn.className = "btn btn-outline-success";
             statusBtn.innerHTML = "Went home";
         });
     }
@@ -31,7 +37,7 @@ statusBtn.onclick = async () =>
             method: 'POST'
         }).then(() =>
         {
-            statusBtn.className = "btn btn-danger";
+            statusBtn.className = "btn btn-outline-danger";
             statusBtn.innerHTML = "Back to shelter";
         })
     }

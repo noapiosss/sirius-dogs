@@ -1,3 +1,5 @@
+using System;
+
 using Contracts.Database;
 
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +30,7 @@ namespace Domain.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=doggesdb;Username=postgres;Password=fyfnjksq123;");
+            _ = optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("SIRIUS_DOGS_DB_CONNECTION_STRING", EnvironmentVariableTarget.Machine));
         }
     }
 }

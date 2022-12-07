@@ -1,7 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Domain.Database;
+using Contracts.Database;
 
 using MediatR;
 
@@ -12,6 +14,7 @@ namespace Domain.Commands
     public class DogBackToShelterCommand : IRequest<DogBackToShelterCommandResult>
     {
         public int DogId { get; init; }
+        public string UpdatedBy { get; init; }
     }
 
     public class DogBackToShelterCommandResult
@@ -29,9 +32,11 @@ namespace Domain.Commands
         }
         public async Task<DogBackToShelterCommandResult> Handle(DogBackToShelterCommand request, CancellationToken cancellationToken = default)
         {
-            Contracts.Database.Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+            Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
             dog.WentHome = false;
+            dog.LastUpdate = DateTime.UtcNow;
+            dog.UpdatedBy = request.UpdatedBy;
 
             _ = _dbContext.Doges.Update(dog);
             _ = await _dbContext.SaveChangesAsync(cancellationToken);

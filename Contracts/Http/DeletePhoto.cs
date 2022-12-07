@@ -8,7 +8,7 @@ namespace Contracts.Http
         public int DogId { get; init; }
 
         [Required]
-        public string PhotoPath { get; init; }
+        public string PhotoUrl { get; init; }
     }
 
     public class DeletePhotoResponse

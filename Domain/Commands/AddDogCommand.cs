@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,14 +38,12 @@ namespace Domain.Commands
         }
         public async Task<AddDogCommandResult> Handle(AddDogCommand request, CancellationToken cancellationToken = default)
         {
-            DateTime birthDate = request.BirthDate;
-            birthDate = birthDate.AddHours(12);
             Dog dog = new()
             {
                 Name = request.Name,
                 Breed = request.Breed,
                 Size = request.Size,
-                BirthDate = birthDate.ToUniversalTime(),
+                BirthDate = request.BirthDate.AddHours(12).ToUniversalTime(),
                 About = request.About,
                 Row = request.Row,
                 Enclosure = request.Enclosure,
@@ -57,8 +54,6 @@ namespace Domain.Commands
 
             _ = await _dbContext.AddAsync(dog, cancellationToken);
             _ = await _dbContext.SaveChangesAsync(cancellationToken);
-
-            _ = Directory.CreateDirectory($"{request.RootPath}\\images\\{dog.Id}");
 
             return new AddDogCommandResult
             {

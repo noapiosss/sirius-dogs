@@ -1,7 +1,5 @@
 ﻿using System;
-
 using Microsoft.EntityFrameworkCore.Migrations;
-
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -30,7 +28,9 @@ namespace Domain.Migrations
                     row = table.Column<int>(type: "integer", nullable: false),
                     enclosure = table.Column<int>(type: "integer", nullable: false),
                     title_photo = table.Column<string>(type: "text", nullable: true),
-                    last_update = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    went_home = table.Column<bool>(type: "boolean", nullable: false),
+                    last_update = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_by = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

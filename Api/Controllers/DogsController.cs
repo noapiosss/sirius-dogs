@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Api.Models;
+using Api.Services.Interfaces;
 
 using Contracts.Database;
 
@@ -26,12 +28,14 @@ namespace Api.Controllers
         private readonly ILogger<DogsController> _logger;
         private readonly IMediator _mediator;
         private readonly IWebHostEnvironment _environment;
+        private readonly ICloudStorage _googleStorage;
 
-        public DogsController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+        public DogsController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment, ICloudStorage googleStorage)
         {
             _logger = logger;
             _mediator = mediator;
             _environment = environment;
+            _googleStorage = googleStorage;
         }
 
         public IActionResult Index(ICollection<Dog> dogs)
@@ -94,7 +98,7 @@ namespace Api.Controllers
                 return View(dog);
             }
 
-            AddDogCommand command = new()
+            AddDogCommand addDogCommand = new()
             {
                 Name = dog.Name,
                 Breed = dog.Breed,
@@ -107,17 +111,16 @@ namespace Api.Controllers
                 UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 
-            AddDogCommandResult response = await _mediator.Send(command, cancellationToken);
+            AddDogCommandResult response = await _mediator.Send(addDogCommand, cancellationToken);
 
             // AddTitlePhoto
             if (croppedImage != null)
             {
-                using System.IO.Stream titlePhotoStream = croppedImage.OpenReadStream();
+                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, response.Dog.Id.ToString(), "Title.jpeg");
                 AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = response.Dog.Id,
-                    TitlePhotoStream = titlePhotoStream,
-                    RootPath = _environment.WebRootPath,
+                    PhotoUrl = titleUrl,
                     UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
@@ -129,12 +132,11 @@ namespace Api.Controllers
             {
                 foreach (IFormFile photo in allPhotos)
                 {
-                    using System.IO.Stream photoStream = photo.OpenReadStream();
+                    string photoUrl = await _googleStorage.UploadFileAsync(photo, response.Dog.Id.ToString(), Guid.NewGuid().ToString() + ".jpeg");
                     AddPhotoCommand addPhotoCommand = new()
                     {
                         DogId = response.Dog.Id,
-                        PhotoStream = photoStream,
-                        RootPath = _environment.WebRootPath,
+                        PhotoUrl = photoUrl,
                         UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                     };
 
@@ -142,7 +144,7 @@ namespace Api.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Shelter));
         }
 
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
@@ -168,11 +170,13 @@ namespace Api.Controllers
 
             DeleteDogCommand command = new()
             {
-                DogId = id,
-                RootPath = _environment.WebRootPath
+                DogId = id
             };
-            DeleteDogCommandResult result = await _mediator.Send(command, cancellationToken);
-            return RedirectToAction(nameof(Index));
+
+            _ = await _mediator.Send(command, cancellationToken);
+            await _googleStorage.DeleteFolderAsync(id.ToString());
+
+            return RedirectToAction(nameof(Shelter));
         }
 
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
@@ -202,34 +206,15 @@ namespace Api.Controllers
             // ChangeTitlePhoto
             if (croppedImage != null)
             {
-                using System.IO.Stream titlePhotoStream = croppedImage.OpenReadStream();
+                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, id.ToString(), "Title.jpeg");
                 AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = id,
-                    TitlePhotoStream = titlePhotoStream,
-                    RootPath = _environment.WebRootPath,
+                    PhotoUrl = titleUrl,
                     UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 };
 
                 _ = await _mediator.Send(addTitlePhotoCommand, cancellationToken);
-            }
-
-            // AddOthersPhotos
-            if (allPhotos != null)
-            {
-                foreach (IFormFile photo in allPhotos)
-                {
-                    using System.IO.Stream photoStream = photo.OpenReadStream();
-                    AddPhotoCommand addPhotoCommand = new()
-                    {
-                        DogId = id,
-                        PhotoStream = photoStream,
-                        RootPath = _environment.WebRootPath,
-                        UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
-                    };
-
-                    _ = await _mediator.Send(addPhotoCommand, cancellationToken);
-                }
             }
 
             bool dogWentHome = (await _mediator.Send(new GetDogByIdQuery { DogId = dog.Id }, cancellationToken)).Dog.WentHome;

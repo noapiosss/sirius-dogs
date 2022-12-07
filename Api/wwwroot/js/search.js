@@ -1,38 +1,39 @@
 const ageSlider = document.getElementById("age-slider");
+const showFiltersBtn = document.getElementById("show-filters-button");
+const searchFilters = document.getElementById("search-filters");
 
-window.document.body.onload = async () =>
+showFiltersBtn.onclick = async () =>
 {
-    const ageMinMax = await fetch(`${window.location.origin}/api/age`, {
-        method: 'GET'
-    }).then(response => response.json());
+    console.log("test")
+    searchFilters.hidden = !searchFilters.hidden;
 
-    document.getElementById("show-filters-button").onclick = () =>
+    if (!searchFilters.hidden)
     {
-        document.getElementById("search-filters").hidden = !document.getElementById("search-filters").hidden;
-    }
+        const ageMinMax = await fetch(`${window.location.origin}/api/age`, {
+            method: 'GET'
+        }).then(response => response.json());
 
+        ageSlider.setAttribute("min", monthDiff(new Date(ageMinMax.maxBirthDate), new Date(Date.now())));
+        ageSlider.setAttribute("max", monthDiff(new Date(ageMinMax.minBirthDate), new Date(Date.now())));
+        ageSlider.value = ageSlider.getAttribute("max");
+        ageSlider.setAttribute("step", 1);
 
-    ageSlider.setAttribute("min", monthDiff(new Date(ageMinMax.maxBirthDate), new Date(Date.now())));
-    ageSlider.setAttribute("max", monthDiff(new Date(ageMinMax.minBirthDate), new Date(Date.now())));
-    ageSlider.value = ageSlider.getAttribute("max");
-    ageSlider.setAttribute("step", 1);
-
-    setLabelValue(document.getElementById("selected-age"));
-    ageSlider.oninput = () => 
-    {
         setLabelValue(document.getElementById("selected-age"));
-    };
+        ageSlider.oninput = () => 
+        {
+            setLabelValue(document.getElementById("selected-age"));
+        };
 
-    document.getElementById("search-request").onfocus = () =>
-    {
-        document.getElementById("search-form").style.boxShadow = "0px 0px 0px 5px rgba(0, 122, 255, 0.5)";
+        document.getElementById("search-request").onfocus = () =>
+        {
+            document.getElementById("search-form").style.boxShadow = "0px 0px 0px 5px rgba(0, 122, 255, 0.5)";
+        }
+
+        document.getElementById("search-request").onblur = () => 
+        {
+            document.getElementById("search-form").style.boxShadow = "";
+        }
     }
-
-    document.getElementById("search-request").onblur = () => 
-    {
-        document.getElementById("search-form").style.boxShadow = "";
-    }
-
 }
 
 function setLabelValue(label)

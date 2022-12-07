@@ -33,10 +33,12 @@ namespace Domain.Queries
         }
         public async Task<GetShelterDogsQueryResult> Handle(GetShelterDogsQuery request, CancellationToken cancellationToken)
         {
-            List<Dog> allDogs = await _dbContext.Doges
-                .Where(d => !d.WentHome)
-                .OrderByDescending(d => d.Id)
-                .ToListAsync(cancellationToken);
+            List<Dog> allDogs = await _dbContext.Doges.AnyAsync(cancellationToken)
+                ? await _dbContext.Doges
+                    .Where(d => !d.WentHome)
+                    .OrderByDescending(d => d.Id)
+                    .ToListAsync(cancellationToken)
+                : (new());
 
             return new GetShelterDogsQueryResult
             {
