@@ -20,7 +20,7 @@ namespace Domain.Commands
 
     public class EditDogCommandResult
     {
-        public bool EditingIsSuccessful { get; init; }
+        public Dog Dog { get; init; }
     }
 
     internal class EditDogCommandHandler : IRequestHandler<EditDogCommand, EditDogCommandResult>
@@ -37,7 +37,7 @@ namespace Domain.Commands
             {
                 return new EditDogCommandResult
                 {
-                    EditingIsSuccessful = false
+                    Dog = null
                 };
             }
 
@@ -57,7 +57,7 @@ namespace Domain.Commands
 
             return new EditDogCommandResult
             {
-                EditingIsSuccessful = true
+                Dog = dog
             };
         }
     }

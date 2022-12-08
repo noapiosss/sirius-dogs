@@ -69,8 +69,8 @@
                     </div>
 
                     <p class="card-text">
-                        @{string firstLineAbout = Model[i].About.Split("\r\n")[0].Length < 30 ? Model[i].About.Split("\r\n")[0] : Model[i].About.Split("\r\n")[0].Substring(0, 30).Trim();}
-                        @String.Concat(firstLineAbout, "...")
+                        @{string firstLineAbout = Model[i].About.Split("\r\n")[0].Length < 30 ? Model[i].About.Split("\r\n")[0] : Model[i].About.Split("\r\n")[0].Substring(0, 30).Trim()+"...";}
+                        @firstLineAbout
                     </p>
 
                 </div>

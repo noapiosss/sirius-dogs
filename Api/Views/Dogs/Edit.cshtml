@@ -13,16 +13,14 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group" id="form-group-title-photo">
-                <label asp-for="TitlePhoto" class="control-label">Title photo</label> <br>
                 @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
                 <img class="edit-title-photo" id="edit-title-photo" src=@titlePath>      
                 <input type="file" name="croppedImage" id="cropped-image-input" class="form-control-file" hidden/>
                 <span asp-validation-for="TitlePhoto" class="text-danger"></span>                
             </div>
-            <br>
             
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#titleBackdrop">
+            <button type="button" class="btn btn-primary" id="edit-change-title-photo-btn" data-bs-toggle="modal" data-bs-target="#titleBackdrop">
             Change title photo
             </button>
 

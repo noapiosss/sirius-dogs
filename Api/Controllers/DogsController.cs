@@ -116,7 +116,7 @@ namespace Api.Controllers
             // AddTitlePhoto
             if (croppedImage != null)
             {
-                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, response.Dog.Id.ToString(), "Title.jpeg");
+                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, response.Dog.Id.ToString(), Guid.NewGuid().ToString() + ".jpeg");
                 AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = response.Dog.Id,
@@ -201,12 +201,13 @@ namespace Api.Controllers
 
             dog.Id = id;
             EditDogCommand command = new() { Dog = dog };
-            _ = await _mediator.Send(command, cancellationToken);
+            Dog editedDog = (await _mediator.Send(command, cancellationToken)).Dog;
 
             // ChangeTitlePhoto
             if (croppedImage != null)
             {
-                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, id.ToString(), "Title.jpeg");
+                await _googleStorage.DeleteFileAsync(id.ToString(), editedDog.TitlePhoto);
+                string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, id.ToString(), Guid.NewGuid().ToString() + ".jpeg");
                 AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {
                     DogId = id,
