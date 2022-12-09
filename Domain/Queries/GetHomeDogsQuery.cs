@@ -31,6 +31,7 @@ namespace Domain.Queries
         {
             _dbContext = dbContext;
         }
+
         public async Task<GetHomeDogsQueryResult> Handle(GetHomeDogsQuery request, CancellationToken cancellationToken)
         {
             List<Dog> allDogs = await _dbContext.Doges.AnyAsync(cancellationToken)

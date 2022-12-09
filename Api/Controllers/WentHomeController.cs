@@ -38,7 +38,8 @@ namespace Api.Controllers
 
             DogWentHomeCommand wentHomeCommand = new()
             {
-                DogId = dogId
+                DogId = dogId,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value
             };
 
             _ = await _mediator.Send(wentHomeCommand, cancellationToken);
@@ -56,7 +57,8 @@ namespace Api.Controllers
 
             DogBackToShelterCommand backToShelterCommand = new()
             {
-                DogId = dogId
+                DogId = dogId,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value
             };
 
             _ = await _mediator.Send(backToShelterCommand, cancellationToken);
