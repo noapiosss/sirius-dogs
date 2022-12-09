@@ -21,6 +21,7 @@ namespace Domain.Commands
     public class EditDogCommandResult
     {
         public Dog Dog { get; init; }
+        public string Comment { get; init; }
     }
 
     internal class EditDogCommandHandler : IRequestHandler<EditDogCommand, EditDogCommandResult>
@@ -33,15 +34,26 @@ namespace Domain.Commands
         }
         public async Task<EditDogCommandResult> Handle(EditDogCommand request, CancellationToken cancellationToken = default)
         {
-            if (!await _dbContext.Doges.AnyAsync(d => d.Id == request.Dog.Id, cancellationToken))
+            if (string.IsNullOrEmpty(request.UpdatedBy))
             {
                 return new EditDogCommandResult
                 {
-                    Dog = null
+                    Dog = null,
+                    Comment = "Unauthorized"
                 };
             }
 
             Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.Dog.Id, cancellationToken);
+
+            if (dog == null)
+            {
+                return new EditDogCommandResult
+                {
+                    Dog = null,
+                    Comment = "Dog not found"
+                };
+            }
+
             dog.Name = request.Dog.Name;
             dog.Breed = request.Dog.Breed;
             dog.Size = request.Dog.Size;

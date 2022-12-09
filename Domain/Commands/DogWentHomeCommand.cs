@@ -20,6 +20,7 @@ namespace Domain.Commands
     public class DogWentHomeCommandResult
     {
         public bool StatusIsChanged { get; init; }
+        public string Comment { get; init; }
     }
 
     internal class DogWentHomeCommandHandler : IRequestHandler<DogWentHomeCommand, DogWentHomeCommandResult>
@@ -32,7 +33,34 @@ namespace Domain.Commands
         }
         public async Task<DogWentHomeCommandResult> Handle(DogWentHomeCommand request, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(request.UpdatedBy))
+            {
+                return new DogWentHomeCommandResult
+                {
+                    StatusIsChanged = false,
+                    Comment = "Unauthorized"
+                };
+            }
+
             Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
+
+            if (dog == null)
+            {
+                return new DogWentHomeCommandResult
+                {
+                    StatusIsChanged = false,
+                    Comment = "Dog not found"
+                };
+            }
+
+            if (dog.WentHome)
+            {
+                return new DogWentHomeCommandResult
+                {
+                    StatusIsChanged = false,
+                    Comment = "Dog is already at home"
+                };
+            }
 
             dog.WentHome = true;
             dog.LastUpdate = DateTime.UtcNow;

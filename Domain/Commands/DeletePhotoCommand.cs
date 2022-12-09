@@ -21,6 +21,7 @@ namespace Domain.Commands
     public class DeletePhotoCommandResult
     {
         public bool PhotoIsDeleted { get; init; }
+        public string Comment { get; init; }
     }
 
     internal class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand, DeletePhotoCommandResult>
@@ -33,6 +34,24 @@ namespace Domain.Commands
         }
         public async Task<DeletePhotoCommandResult> Handle(DeletePhotoCommand request, CancellationToken cancellationToken = default)
         {
+            if (!await _dbContext.Doges.AnyAsync(d => d.Id == request.DogId, cancellationToken))
+            {
+                return new DeletePhotoCommandResult
+                {
+                    PhotoIsDeleted = false,
+                    Comment = "Dog not found"
+                };
+            }
+
+            if (!await _dbContext.Images.AnyAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken))
+            {
+                return new DeletePhotoCommandResult
+                {
+                    PhotoIsDeleted = false,
+                    Comment = "Image not found"
+                };
+            }
+
             Image photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
 
             _ = _dbContext.Remove(photo);

@@ -34,6 +34,11 @@ namespace Domain.Commands
         }
         public async Task<AddPhotoCommandResult> Handle(AddPhotoCommand request, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(request.UpdatedBy) || string.IsNullOrEmpty(request.PhotoUrl))
+            {
+                return null;
+            }
+
             Image image = new()
             {
                 DogId = request.DogId,

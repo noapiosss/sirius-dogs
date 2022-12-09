@@ -1,5 +1,3 @@
-using System;
-
 using Contracts.Database;
 
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +28,7 @@ namespace Domain.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            _ = optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("SIRIUS_DOGS_DB_CONNECTION_STRING", EnvironmentVariableTarget.Machine));
+            //_ = optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("SIRIUS_DOGS_DB_CONNECTION_STRING", EnvironmentVariableTarget.Machine));
         }
     }
 }

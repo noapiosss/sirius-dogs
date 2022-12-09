@@ -33,6 +33,11 @@ namespace Domain.Commands
         }
         public async Task<AddTitlePhotoCommandResult> Handle(AddTitlePhotoCommand request, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(request.UpdatedBy) || string.IsNullOrEmpty(request.PhotoUrl))
+            {
+                return null;
+            }
+
             Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
 
             dog.TitlePhoto = request.PhotoUrl;

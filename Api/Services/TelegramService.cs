@@ -49,8 +49,8 @@ public class TelegramService : ITelegramService
             if (update.Message.Text.Equals("/help"))
             {
                 var message = $"- `/ShowAllDogs` to see overview on all dogs\n" + 
-                    $"- `/GetDogById` to see detail about dog with the specified id\n" +
-                    $"For example: `/GetDogById 9`\n" +
+                    // $"- `/GetDogById` to see detail about dog with the specified id\n" +
+                    // $"For example: `/GetDogById 9`\n" +
                     $"- `/Search` to search dogs by your request\n"+
                     $"For example `/Search cute dog`\n";
 
@@ -212,9 +212,15 @@ public class TelegramService : ITelegramService
 
                         media[0].Caption = message;
 
-                        await _telegramBotClient.SendMediaGroupAsync(chatId,
+                        var mediaGroupResponse = await _telegramBotClient.SendMediaGroupAsync(chatId,
                             media: media,
                             cancellationToken: cancellationToken);
+
+                        await _telegramBotClient.EditMessageCaptionAsync(chatId,
+                            messageId: mediaGroupResponse[0].MessageId,
+                            caption: mediaGroupResponse[0].Caption,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            cancellationToken: cancellationToken); 
                         
                         continue;
                     }
@@ -223,7 +229,7 @@ public class TelegramService : ITelegramService
                         photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
                         caption: message,
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        cancellationToken: cancellationToken);                    
+                        cancellationToken: cancellationToken);                
                 }
 
                 return;

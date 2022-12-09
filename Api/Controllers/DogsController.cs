@@ -107,7 +107,6 @@ namespace Api.Controllers
                 About = dog.About,
                 Row = dog.Row,
                 Enclosure = dog.Enclosure,
-                RootPath = _environment.WebRootPath,
                 UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 

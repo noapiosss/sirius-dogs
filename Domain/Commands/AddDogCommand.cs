@@ -19,7 +19,6 @@ namespace Domain.Commands
         public string About { get; init; }
         public int Row { get; init; }
         public int Enclosure { get; init; }
-        public string RootPath { get; init; }
         public string UpdatedBy { get; init; }
     }
 
@@ -38,12 +37,17 @@ namespace Domain.Commands
         }
         public async Task<AddDogCommandResult> Handle(AddDogCommand request, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(request.UpdatedBy))
+            {
+                return null;
+            }
+
             Dog dog = new()
             {
                 Name = request.Name,
                 Breed = request.Breed,
                 Size = request.Size,
-                BirthDate = request.BirthDate.AddHours(12).ToUniversalTime(),
+                BirthDate = request.BirthDate.ToUniversalTime(),
                 About = request.About,
                 Row = request.Row,
                 Enclosure = request.Enclosure,
