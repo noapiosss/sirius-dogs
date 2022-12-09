@@ -230,7 +230,6 @@ namespace Api.Controllers
 
             GetDogByIdQuery query = new() { DogId = id };
             GetDogByIdQueryResult result = await _mediator.Send(query, cancellationToken);
-            result.Dog.BirthDate = result.Dog.BirthDate.ToLocalTime();
             return View(result.Dog);
         }
 

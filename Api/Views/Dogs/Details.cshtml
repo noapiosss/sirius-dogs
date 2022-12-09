@@ -8,125 +8,132 @@
 
 @inherits Helper<TModel>
 
-<h1>@Model.Name</h1>
+@if(Model == null)
+{
+    <h1>Dog not found</h1>
+}
+else
+{
+    <h1>@Model.Name</h1>
 
 
-<table class="table">
-    <tbody>
-        <td class="photos-cell">
-            <i class="bi bi-chevron-right"></i>
-            <div id="dogCarousel" class="carousel slide carousel-fade" data-mdb-ride="carousel">
-                @if(Model.Photos.Any())
-                {
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#dogCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        @for (int i = 0; i < Model.Photos.Count; ++i)
-                        {
-                            <button type="button" data-bs-target="#dogCarousel" data-bs-slide-to="@(i+1)" aria-label="Slide @(i+1)"></button>
-                        }
-                    </div>
-                }
-                <div class="carousel-inner">
-
-                    <div class="carousel-item active">
-                        @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
-                        <img src=@titlePath class="carousel-img">
-                    </div>
-
-                    @foreach (var photo in Model.Photos)
+    <table class="table">
+        <tbody>
+            <td class="photos-cell">
+                <i class="bi bi-chevron-right"></i>
+                <div id="dogCarousel" class="carousel slide carousel-fade" data-mdb-ride="carousel">
+                    @if(Model.Photos.Any())
                     {
-                        <div class="carousel-item">
-                            @{string photoPath = $"https://storage.cloud.google.com/sirius_dogs_test/{Model.Id}/{photo.PhotoPath}";}
-                            <img src=@photoPath class="carousel-img">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#dogCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                            @for (int i = 0; i < Model.Photos.Count; ++i)
+                            {
+                                <button type="button" data-bs-target="#dogCarousel" data-bs-slide-to="@(i+1)" aria-label="Slide @(i+1)"></button>
+                            }
                         </div>
                     }
+                    <div class="carousel-inner">
 
-                    <button class="carousel-control-prev" type="button" data-bs-target="#dogCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" id="carousel-side-button" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#dogCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" id="carousel-side-button" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                    
-                </div>
-            </div>
-        </td>
-        <td>
-            <div>
-                <dl class="row">
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Name)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Name)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Breed)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Breed)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Size)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Size)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        Age
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @GetAge(Model.BirthDate)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.About)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @foreach (var line in Model.About.Split("\r\n"))
+                        <div class="carousel-item active">
+                            @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
+                            <img src=@titlePath class="carousel-img">
+                        </div>
+
+                        @foreach (var photo in Model.Photos)
                         {
-                            @line <br>
+                            <div class="carousel-item">
+                                @{string photoPath = $"https://storage.cloud.google.com/sirius_dogs_test/{Model.Id}/{photo.PhotoPath}";}
+                                <img src=@photoPath class="carousel-img">
+                            </div>
                         }
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Row)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Row)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.Enclosure)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Html.DisplayFor(model => model.Enclosure)
-                    </dd>
-                    <dt class = "col-sm-2">
-                        @Html.DisplayNameFor(model => model.LastUpdate)
-                    </dt>
-                    <dd class = "col-sm-10">
-                        @Model.LastUpdate (@Model.UpdatedBy)
-                    </dd>
-                </dl>
-            </div>
-            <div>
-                @if(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value != null)
-                {
-                    @if(Model.WentHome)
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#dogCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" id="carousel-side-button" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#dogCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" id="carousel-side-button" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <dl class="row">
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.Breed)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Html.DisplayFor(model => model.Breed)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.Size)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Html.DisplayFor(model => model.Size)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            Age
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @GetAge(Model.BirthDate)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.About)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @foreach (var line in Model.About.Split("\r\n"))
+                            {
+                                @line <br>
+                            }
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.Row)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Html.DisplayFor(model => model.Row)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.Enclosure)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Html.DisplayFor(model => model.Enclosure)
+                        </dd>
+                        <dt class = "col-sm-2">
+                            @Html.DisplayNameFor(model => model.LastUpdate)
+                        </dt>
+                        <dd class = "col-sm-10">
+                            @Model.LastUpdate (@Model.UpdatedBy)
+                        </dd>
+                    </dl>
+                </div>
+                <div>
+                    @if(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value != null)
                     {
-                        <button type="button" class="btn btn-outline-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
+                        @if(Model.WentHome)
+                        {
+                            <button type="button" class="btn btn-outline-danger" id="status-button" dogId="@Model.Id">Back to shelter</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-success" id="status-button" dogId="@Model.Id">Went home</button>
+                        }
+                        <button type="button" class="btn btn-outline-warning" id="edit-button" dogId="@Model.Id">Edit</button>
+                        <button type="button" class="btn btn-outline-danger" id="delete-button" dogId="@Model.Id">Delete</button>
                     }
-                    else
-                    {
-                        <button type="button" class="btn btn-outline-success" id="status-button" dogId="@Model.Id">Went home</button>
-                    }
-                    <button type="button" class="btn btn-outline-warning" id="edit-button" dogId="@Model.Id">Edit</button>
-                    <button type="button" class="btn btn-outline-danger" id="delete-button" dogId="@Model.Id">Delete</button>
-                }
-                <button type="button" class="btn btn-outline-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
-            </div>
-        </td>
-    </tbody>
-</table>
+                    <button type="button" class="btn btn-outline-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to List</button>
+                </div>
+            </td>
+        </tbody>
+    </table>
+}
 
 <script src="~/js/details-page.js"></script>

@@ -5,159 +5,166 @@
     Layout = "_Layout";
 }
 
-<h1>@Model.Name</h1>
+@if(Model == null)
+{
+    <h1>Dog not found</h1>
+}
+else
+{
+    <h1>@Model.Name</h1>
 
-<hr />
-<div class="row">    
-    <form asp-action="Edit" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group" id="form-group-title-photo">
-                @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
-                <img class="edit-title-photo" id="edit-title-photo" src=@titlePath>      
-                <input type="file" name="croppedImage" id="cropped-image-input" class="form-control-file" hidden/>
-                <span asp-validation-for="TitlePhoto" class="text-danger"></span>                
-            </div>
-            
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" id="edit-change-title-photo-btn" data-bs-toggle="modal" data-bs-target="#titleBackdrop">
-            Change title photo
-            </button>
+    <hr />
+    <div class="row">    
+        <form asp-action="Edit" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group" id="form-group-title-photo">
+                    @{string titlePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model.Id}/{Model.TitlePhoto}";}
+                    <img class="edit-title-photo" id="edit-title-photo" src=@titlePath>      
+                    <input type="file" name="croppedImage" id="cropped-image-input" class="form-control-file" hidden/>
+                    <span asp-validation-for="TitlePhoto" class="text-danger"></span>                
+                </div>
+                
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" id="edit-change-title-photo-btn" data-bs-toggle="modal" data-bs-target="#titleBackdrop">
+                Change title photo
+                </button>
 
-            <!-- Modal -->
-            <div class="modal fade" id="titleBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl">
-                    <div class="modal-content">
+                <!-- Modal -->
+                <div class="modal fade" id="titleBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
 
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="titleBackdropLabel">Change title photo</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <input type="file" name="file" id="title-photo-input" class="form-control-file" accept="image/*"/>
-                            <div id="image-handler">
-                            
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="titleBackdropLabel">Change title photo</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                        </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="close-cropped-image-modal" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="submit-cropped-image">Apply</button>
-                        </div>
+                            <div class="modal-body">
+                                <input type="file" name="file" id="title-photo-input" class="form-control-file" accept="image/*"/>
+                                <div id="image-handler">
+                                
+                                </div>
+                            </div>
 
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="close-cropped-image-modal" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="submit-cropped-image">Apply</button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Breed" class="control-label"></label>
+                    <input asp-for="Breed" class="form-control" />
+                    <span asp-validation-for="Breed" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Size" class="control-label"></label>
+                    <input asp-for="Size" class="form-control" />
+                    <span asp-validation-for="Size" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BirthDate" class="control-label"></label>
+                    <input asp-for="BirthDate" type="date" class="form-control" />
+                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="About" class="control-label"></label>
+                    <textarea asp-for="About" class="form-control about-textarea" id="about-textarea"></textarea>
+                    <span asp-validation-for="About" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Row" class="control-label"></label>
+                    <input asp-for="Row" class="form-control" />
+                    <span asp-validation-for="Row" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Enclosure" class="control-label"></label>
+                    <input asp-for="Enclosure" class="form-control" />
+                    <span asp-validation-for="Enclosure" class="text-danger"></span>
+                </div>
+                
+
+                <div class="form-group" id="form-group-photos"> 
+                    <input type="file" name="allPhotos" id="all-photos" multiple="multiple" class="form-control-file form-control" accept="image/*" hidden/>    
+                </div>
+
+            </div>
         </div>
-        <div class="col-md-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Breed" class="control-label"></label>
-                <input asp-for="Breed" class="form-control" />
-                <span asp-validation-for="Breed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
-                <span asp-validation-for="Size" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" type="date" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="About" class="control-label"></label>
-                <textarea asp-for="About" class="form-control about-textarea" id="about-textarea"></textarea>
-                <span asp-validation-for="About" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Row" class="control-label"></label>
-                <input asp-for="Row" class="form-control" />
-                <span asp-validation-for="Row" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Enclosure" class="control-label"></label>
-                <input asp-for="Enclosure" class="form-control" />
-                <span asp-validation-for="Enclosure" class="text-danger"></span>
-            </div>
             
+            <br>
+            
+                <h1>Photos</h1>
+                <hr />
+                <div class="images" id="images">
+                    @foreach(var photo in Model.Photos)
+                    {
+                            <div class="photo-control-container" id="photo-control-container"> 
 
-            <div class="form-group" id="form-group-photos"> 
-                <input type="file" name="allPhotos" id="all-photos" multiple="multiple" class="form-control-file form-control" accept="image/*" hidden/>    
-            </div>
+                                <div class="photo-container">
+                                    @{string photoPath = $"https://storage.cloud.google.com/sirius_dogs_test/{Model.Id}/{photo.PhotoPath}";}
+                                    <img class="dog-photo-img" src=@photoPath>                    
+                                </div>
 
-        </div>
+                                <div class="delete-photo-btn" id="delete-photo-btn" data-dog-id=@Model.Id data-photo-path=@photo.PhotoPath>
+                                    [ delete ]
+                                </div>
+                                
+                            </div>
+                    }
+
+                    <div class="photo-control-container add-photo-control-container" id="add-photo-control-container">
+                        <!-- Button trigger modal -->
+                        <div class="photo-container add-photo-container" id="add-photo-container" data-bs-toggle="modal" data-bs-target="#allPhotosBackdrop">
+                            <svg width="25%" height="25%" viewBox="0 0 16 16" fill="rgb(194, 194, 194)" id="add-photo-svg">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </div> 
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="allPhotosBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="allPhotosBackdropLabel">Upload photos</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="file" name="file" id="all-photos-input" multiple="multiple" class="form-control-file" accept="image/*"/>
+                                <div id="all-photos-labels"></div>                        
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="close-all-photos-modal" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="submit-all-photos">Apply</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to list</button>
+                </div>
+            </form>
     </div>
-        
-        <br>
-        
-            <h1>Photos</h1>
-            <hr />
-            <div class="images" id="images">
-                @foreach(var photo in Model.Photos)
-                {
-                        <div class="photo-control-container" id="photo-control-container"> 
-
-                            <div class="photo-container">
-                                @{string photoPath = $"https://storage.cloud.google.com/sirius_dogs_test/{Model.Id}/{photo.PhotoPath}";}
-                                <img class="dog-photo-img" src=@photoPath>                    
-                            </div>
-
-                            <div class="delete-photo-btn" id="delete-photo-btn" data-dog-id=@Model.Id data-photo-path=@photo.PhotoPath>
-                                [ delete ]
-                            </div>
-                            
-                        </div>
-                }
-
-                <div class="photo-control-container add-photo-control-container" id="add-photo-control-container">
-                    <!-- Button trigger modal -->
-                    <div class="photo-container add-photo-container" id="add-photo-container" data-bs-toggle="modal" data-bs-target="#allPhotosBackdrop">
-                        <svg width="25%" height="25%" viewBox="0 0 16 16" fill="rgb(194, 194, 194)" id="add-photo-svg">
-                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                    </div> 
-                </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="allPhotosBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="allPhotosBackdropLabel">Upload photos</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <input type="file" name="file" id="all-photos-input" multiple="multiple" class="form-control-file" accept="image/*"/>
-                            <div id="all-photos-labels"></div>                        
-                        </div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="close-all-photos-modal" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="submit-all-photos">Apply</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <button type="button" class="btn btn-primary" id="back-to-list-button" wentHome="@Model.WentHome">Back to list</button>
-            </div>
-        </form>
-</div>
+}
 
 <script src="~/js/edit-page.js"></script>
 <script src="~/js/text-area-growth.js"></script>
