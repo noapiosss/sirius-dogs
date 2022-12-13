@@ -199,7 +199,11 @@ namespace Api.Controllers
             }
 
             dog.Id = id;
-            EditDogCommand command = new() { Dog = dog };
+            EditDogCommand command = new()
+            {
+                Dog = dog,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value
+            };
             Dog editedDog = (await _mediator.Send(command, cancellationToken)).Dog;
 
             // ChangeTitlePhoto

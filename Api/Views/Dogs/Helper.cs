@@ -23,6 +23,11 @@ public abstract class Helper<TModel> : RazorPage<TModel>
         return IsPlural(months) ? $"{months} months" : $"{months} month";
     }
 
+    public int GetMonthDifference(DateTime birthDate)
+    {
+        return ((DateTime.Now.Year - birthDate.Year) * 12) + DateTime.Now.Month - birthDate.Month;
+    }
+
     private static bool IsPlural(int number)
     {
         return number % 100 == 11 || number % 10 != 1;

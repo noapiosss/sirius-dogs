@@ -19,9 +19,26 @@
         <div class="filter-age">
             Age
             <br>
-            <input name="filterAge" id="age-slider" class="multi-range age-slider" type="range" />
+            <input id="age-slider" class="multi-range age-slider" type="range" />
+            <input name="filterAge" id="filter-age-monthnumber" type="number" hidden/>
             <br>
             <label id="selected-age"></label>
+            @if(Model[0].WentHome)
+            {
+                <script>
+                    var wentHome = true;
+                </script>
+            }
+            else
+            {
+                <script>
+                    var wentHome = false;
+                </script>
+            }
+            
+            <script>
+                var birthDates;
+            </script>
         </div>
         <div class="filter-row">
             Row
@@ -37,58 +54,65 @@
 
 </form>
 
-<div class="dogs-container">
-@for (int i = 0; i < Model.Count || i % 4 != 0; ++i) {
-    if (i % 4 == 0)
-    {
-        @:<div class="row">
-    }
+@if(!Model.Any())
+{
+    <h1>No any result</h1>
+}
+else
+{    
+    <div class="dogs-container">
+    @for (int i = 0; i < Model.Count || i % 4 != 0; ++i) {
+        if (i % 4 == 0)
+        {
+            @:<div class="row">
+        }
 
-    @if (i < Model.Count)
-    {
-        <div class="col"> 
-            <div class="card">
+        @if (i < Model.Count)
+        {
+            <div class="col"> 
+                <div class="card">
 
-                @{string imagePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model[i].Id}/{Model[i].TitlePhoto}";}
-                <a href="/Dogs/Details/@Model[i].Id">
-                    <img  src=@imagePath class="card-img-top" alt="...">
-                </a>
+                    @{string imagePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model[i].Id}/{Model[i].TitlePhoto}";}
+                    <a href="/Dogs/Details/@Model[i].Id">
+                        <img  src=@imagePath class="card-img-top" alt="...">
+                    </a>
 
-                <div class="card-body">
+                    <div class="card-body">
 
-                    <div class="name-age">
+                        <div class="name-age">
 
-                        <div class="name-container">
-                            <h5>@Model[i].Name</h5>
+                            <div class="name-container">
+                                <h5>@Model[i].Name</h5>
+                            </div>
+
+                            <div class="age-container">
+                                <h6>@GetAge(Model[i].BirthDate)</h6>
+                            </div>
+
                         </div>
 
-                        <div class="age-container">
-                            <h6>@GetAge(Model[i].BirthDate)</h6>
-                        </div>
+                        <p class="card-text">
+                            @{string firstLineAbout = Model[i].About.Split("\r\n")[0].Length < 30 ? Model[i].About.Split("\r\n")[0] : Model[i].About.Split("\r\n")[0].Substring(0, 30).Trim()+"...";}
+                            @firstLineAbout
+                        </p>
 
                     </div>
 
-                    <p class="card-text">
-                        @{string firstLineAbout = Model[i].About.Split("\r\n")[0].Length < 30 ? Model[i].About.Split("\r\n")[0] : Model[i].About.Split("\r\n")[0].Substring(0, 30).Trim()+"...";}
-                        @firstLineAbout
-                    </p>
-
                 </div>
-
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="col">
-        </div>
-    }
+        }
+        else
+        {
+            <div class="col">
+            </div>
+        }
 
-    if (i % 4 == 3)
-    {
-        @:</div>
+        if (i % 4 == 3)
+        {
+            @:</div>
+        }
     }
+    </div>
 }
-</div>
 
 <script src="~/js/search.js" ></script>
