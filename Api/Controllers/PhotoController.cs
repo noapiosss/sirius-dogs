@@ -12,26 +12,20 @@ using Domain.Commands;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers
 {
     [Route("api/photos")]
     public class PhotoController : BaseController
     {
-        private readonly ILogger<DogsController> _logger;
         private readonly IMediator _mediator;
-        private readonly IWebHostEnvironment _environment;
         private readonly ICloudStorage _googleStorage;
 
-        public PhotoController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment, ICloudStorage googleStorage)
+        public PhotoController(IMediator mediator, ICloudStorage googleStorage)
         {
-            _logger = logger;
             _mediator = mediator;
-            _environment = environment;
             _googleStorage = googleStorage;
         }
 

@@ -7,25 +7,19 @@ using Domain.Commands;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers
 {
     [Route("api")]
     public class WentHomeController : BaseController
     {
-        private readonly ILogger<DogsController> _logger;
         private readonly IMediator _mediator;
-        private readonly IWebHostEnvironment _environment;
 
-        public WentHomeController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+        public WentHomeController(IMediator mediator)
         {
-            _logger = logger;
             _mediator = mediator;
-            _environment = environment;
         }
 
         [HttpPost("{dogId}/wenthome")]

@@ -12,7 +12,7 @@ namespace Api.Controllers
 {
     public class BaseController : ControllerBase
     {
-        protected async Task<IActionResult> SafeExecute(Func<Task<IActionResult>> action, CancellationToken cansellationToken)
+        protected async Task<IActionResult> SafeExecute(Func<Task<IActionResult>> action, CancellationToken canсellationToken)
         {
             try
             {

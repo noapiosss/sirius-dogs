@@ -12,17 +12,14 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers
 {
     public class SessionController : Controller
     {
-        private readonly ILogger<SessionController> _logger;
 
-        public SessionController(ILogger<SessionController> logger)
+        public SessionController()
         {
-            _logger = logger;
         }
 
         public IActionResult Signin()

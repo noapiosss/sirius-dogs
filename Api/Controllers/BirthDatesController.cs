@@ -9,25 +9,19 @@ using Domain.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Controllers
 {
     [Route("api/birthdates")]
     public class BirthDatesController : BaseController
     {
-        private readonly ILogger<DogsController> _logger;
         private readonly IMediator _mediator;
-        private readonly IWebHostEnvironment _environment;
 
-        public BirthDatesController(ILogger<DogsController> logger, IMediator mediator, IWebHostEnvironment environment)
+        public BirthDatesController(IMediator mediator)
         {
-            _logger = logger;
             _mediator = mediator;
-            _environment = environment;
         }
 
         [HttpGet("shelter")]
