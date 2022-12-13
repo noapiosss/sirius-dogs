@@ -38,12 +38,12 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
-            GetDogBirthDatesQuery getDogBirthDatesQuery = new()
+            GetDogsBirthDatesQuery getDogsBirthDatesQuery = new()
             {
                 WentHome = false
             };
 
-            GetDogBirthDatesQueryResult getDogBirthDatesQueryResult = await _mediator.Send(getDogBirthDatesQuery, cancellationToken);
+            GetDogsBirthDatesQueryResult getDogBirthDatesQueryResult = await _mediator.Send(getDogsBirthDatesQuery, cancellationToken);
             GetBirthDatesResponse response = new()
             {
                 BirthDates = getDogBirthDatesQueryResult.DogsBirthDates
@@ -60,12 +60,12 @@ namespace Api.Controllers
                 return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
             }
 
-            GetDogBirthDatesQuery getDogBirthDatesQuery = new()
+            GetDogsBirthDatesQuery getDogsBirthDatesQuery = new()
             {
                 WentHome = true
             };
 
-            GetDogBirthDatesQueryResult getDogBirthDatesQueryResult = await _mediator.Send(getDogBirthDatesQuery, cancellationToken);
+            GetDogsBirthDatesQueryResult getDogBirthDatesQueryResult = await _mediator.Send(getDogsBirthDatesQuery, cancellationToken);
             GetBirthDatesResponse response = new()
             {
                 BirthDates = getDogBirthDatesQueryResult.DogsBirthDates

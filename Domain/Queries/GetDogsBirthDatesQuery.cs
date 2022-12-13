@@ -12,26 +12,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Queries
 {
-    public class GetDogBirthDatesQuery : IRequest<GetDogBirthDatesQueryResult>
+    public class GetDogsBirthDatesQuery : IRequest<GetDogsBirthDatesQueryResult>
     {
         public bool WentHome { get; init; }
     }
 
-    public class GetDogBirthDatesQueryResult
+    public class GetDogsBirthDatesQueryResult
     {
         public ICollection<DateTime> DogsBirthDates { get; init; }
     }
 
-    internal class GetDogBirthDatesQueryHandler : IRequestHandler<GetDogBirthDatesQuery, GetDogBirthDatesQueryResult>
+    internal class GetDogsBirthDatesQueryHandler : IRequestHandler<GetDogsBirthDatesQuery, GetDogsBirthDatesQueryResult>
     {
         private readonly DogesDbContext _dbContext;
 
 
-        public GetDogBirthDatesQueryHandler(DogesDbContext dbContext)
+        public GetDogsBirthDatesQueryHandler(DogesDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<GetDogBirthDatesQueryResult> Handle(GetDogBirthDatesQuery request, CancellationToken cancellationToken)
+        public async Task<GetDogsBirthDatesQueryResult> Handle(GetDogsBirthDatesQuery request, CancellationToken cancellationToken)
         {
             List<DateTime> dogsBirthDates = await _dbContext.Doges.AnyAsync(cancellationToken)
                     ? await _dbContext.Doges
@@ -40,7 +40,7 @@ namespace Domain.Queries
                         .ToListAsync(cancellationToken)
                     : (new());
 
-            return new GetDogBirthDatesQueryResult
+            return new GetDogsBirthDatesQueryResult
             {
                 DogsBirthDates = dogsBirthDates
             };
