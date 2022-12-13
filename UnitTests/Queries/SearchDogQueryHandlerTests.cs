@@ -49,11 +49,11 @@ namespace unittests.Queries
             {
                 Dog dog = new()
                 {
-                    Name = Guid.NewGuid().ToString(),
-                    Breed = Guid.NewGuid().ToString(),
+                    Name = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
+                    Breed = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
                     Size = _sizes[_random.Next(_sizes.Length)],
                     BirthDate = RandomDate.GetRandomDate().ToUniversalTime(),
-                    About = Guid.NewGuid().ToString(),
+                    About = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
                     Row = _random.Next(100),
                     Enclosure = _random.Next(100),
                     WentHome = true,
@@ -71,11 +71,11 @@ namespace unittests.Queries
             {
                 Dog dog = new()
                 {
-                    Name = Guid.NewGuid().ToString(),
-                    Breed = Guid.NewGuid().ToString(),
+                    Name = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
+                    Breed = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
                     Size = _sizes[_random.Next(_sizes.Length)],
                     BirthDate = RandomDate.GetRandomDate().ToUniversalTime(),
-                    About = Guid.NewGuid().ToString(),
+                    About = _random.Next(100) < 20 ? Guid.NewGuid().ToString().Insert(_random.Next(36), searchRequest) : Guid.NewGuid().ToString(),
                     Row = _random.Next(100),
                     Enclosure = _random.Next(100),
                     UpdatedBy = Guid.NewGuid().ToString()
