@@ -203,7 +203,10 @@ namespace Api.Controllers
             // ChangeTitlePhoto
             if (croppedImage != null)
             {
-                await _googleStorage.DeleteFileAsync(id.ToString(), editedDog.TitlePhoto);
+                if (!string.IsNullOrEmpty(editedDog.TitlePhoto))
+                {
+                    await _googleStorage.DeleteFileAsync(id.ToString(), editedDog.TitlePhoto);
+                }
                 string titleUrl = await _googleStorage.UploadFileAsync(croppedImage, id.ToString(), Guid.NewGuid().ToString() + ".jpeg");
                 AddTitlePhotoCommand addTitlePhotoCommand = new()
                 {

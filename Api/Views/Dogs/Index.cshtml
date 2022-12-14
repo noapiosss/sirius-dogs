@@ -23,7 +23,7 @@
             <input name="filterAge" id="filter-age-monthnumber" type="number" hidden/>
             <br>
             <label id="selected-age"></label>
-            @if(Model[0].WentHome)
+            @if(Context.Request.Path.ToString().Split("/").Last().ToLower() == "home")
             {
                 <script>
                     var wentHome = true;
@@ -48,11 +48,13 @@
         <div class="filter-enclosure">
             Enclosure
             <br>
-            <input name="filterEnclosure" id="encosure-filter" class="encosure-filter" type="number" />
+            <input name="filterEnclosure" id="enclousre-filter" class="encosure-filter" type="number" />
         </div>
     </div>
 
 </form>
+
+<hr />
 
 @if(!Model.Any())
 {
@@ -71,11 +73,13 @@ else
         {
             <div class="col"> 
                 <div class="card">
-
-                    @{string imagePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model[i].Id}/{Model[i].TitlePhoto}";}
-                    <a href="/Dogs/Details/@Model[i].Id">
-                        <img  src=@imagePath class="card-img-top" alt="...">
-                    </a>
+                    
+                        @{string imagePath = $"https://storage.googleapis.com/sirius_dogs_test/{Model[i].Id}/{Model[i].TitlePhoto}";}
+                        <a href="/Dogs/Details/@Model[i].Id">
+                        <div class="card-img-container">
+                            <img src=@imagePath class="card-img-top" alt="...">
+                        </div>
+                        </a>
 
                     <div class="card-body">
 
