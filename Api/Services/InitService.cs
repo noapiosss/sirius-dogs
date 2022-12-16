@@ -1,7 +1,8 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Api.Configuration;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -22,11 +23,11 @@ namespace Api.Services
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _ = _botConfiguration.CurrentValue.Domain;
-            _ = _botConfiguration.CurrentValue.BotAccessToken;
+            // _ = _botConfiguration.CurrentValue.Domain;
+            // _ = _botConfiguration.CurrentValue.TgBotToken;
 
             // return _telegramBotClient.SetWebhookAsync($"{domain}/bot/{token}",
-            return _telegramBotClient.SetWebhookAsync($"{Environment.GetEnvironmentVariable("SIRIUS_DOGS_TG_BOT_WEB_HOOK", EnvironmentVariableTarget.Machine)}/api/bot",
+            return _telegramBotClient.SetWebhookAsync(_botConfiguration.CurrentValue.Domain,
                 allowedUpdates: Enumerable.Empty<UpdateType>(),
                 cancellationToken: cancellationToken);
         }

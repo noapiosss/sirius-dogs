@@ -21,6 +21,7 @@ namespace Domain.Commands
     public class AddTitlePhotoCommandResult
     {
         public string PhotoUrl { get; init; }
+        public string Comment { get; init; }
     }
 
     internal class AddTitlePhotoCommandHandler : IRequestHandler<AddTitlePhotoCommand, AddTitlePhotoCommandResult>
@@ -33,9 +34,22 @@ namespace Domain.Commands
         }
         public async Task<AddTitlePhotoCommandResult> Handle(AddTitlePhotoCommand request, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(request.UpdatedBy) || string.IsNullOrEmpty(request.PhotoUrl))
+            if (string.IsNullOrEmpty(request.UpdatedBy))
             {
-                return null;
+                return new AddTitlePhotoCommandResult
+                {
+                    PhotoUrl = null,
+                    Comment = "Unauthorized"
+                };
+            }
+
+            if (string.IsNullOrEmpty(request.PhotoUrl))
+            {
+                return new AddTitlePhotoCommandResult
+                {
+                    PhotoUrl = null,
+                    Comment = "Invalid photo URL"
+                };
             }
 
             Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);

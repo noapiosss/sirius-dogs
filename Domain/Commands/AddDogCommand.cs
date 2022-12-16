@@ -25,6 +25,7 @@ namespace Domain.Commands
     public class AddDogCommandResult
     {
         public Dog Dog { get; init; }
+        public string Comment { get; init; }
     }
 
     internal class AddDogCommandHandler : IRequestHandler<AddDogCommand, AddDogCommandResult>
@@ -39,7 +40,11 @@ namespace Domain.Commands
         {
             if (string.IsNullOrEmpty(request.UpdatedBy))
             {
-                return null;
+                return new AddDogCommandResult
+                {
+                    Dog = null,
+                    Comment = "Unauthorized"
+                };
             }
 
             Dog dog = new()

@@ -43,7 +43,8 @@ namespace Api.Controllers
             AddPhotoCommand command = new()
             {
                 DogId = dogId,
-                PhotoUrl = photoUrl
+                PhotoUrl = photoUrl,
+                UpdatedBy = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
             };
 
             AddPhotoCommandResult response = await _mediator.Send(command, cancellationToken);

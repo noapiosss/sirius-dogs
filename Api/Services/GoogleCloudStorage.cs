@@ -1,12 +1,12 @@
+using Api.Configuration;
 using Api.Services.Interfaces;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,15 +16,13 @@ namespace Api.Services
 {
     public class GoogleCloudStorage : ICloudStorage
     {
-        private readonly GoogleCredential _googleCredential;
         private readonly StorageClient _storageClient;
         private readonly string _bucketName;
 
-        public GoogleCloudStorage(IConfiguration configuration)
+        public GoogleCloudStorage(IOptionsMonitor<AppConfiguration> configuration)
         {
-            _googleCredential = GoogleCredential.FromFile(Environment.GetEnvironmentVariable("SIRIUS_DOGS_GOOGLE_CREDENTIAL_FILE", EnvironmentVariableTarget.Machine));
-            _storageClient = StorageClient.Create(_googleCredential);
-            _bucketName = Environment.GetEnvironmentVariable("SIRIUS_DOGS_GOOGLE_BUCKET", EnvironmentVariableTarget.Machine);
+            _storageClient = StorageClient.Create(GoogleCredential.FromFile(configuration.CurrentValue.GoogleCredentialFile));
+            _bucketName = configuration.CurrentValue.GoogleBucket;
         }
 
         public async Task<string> UploadFileAsync(IFormFile imageFile, string folderName, string fileNameForStorage)

@@ -1,6 +1,4 @@
 using Api.Services.Interfaces;
-
-using Api;
 using Api.Configuration;
 
 using Domain;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Api.Services;
-using System;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -36,14 +33,14 @@ builder.Services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
 builder.Services.AddDomainServices((sp, options) =>
 {
     IOptionsMonitor<AppConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<AppConfiguration>>();
-    _ = options.UseNpgsql(Environment.GetEnvironmentVariable("SIRIUS_DOGS_DB_CONNECTION_STRING", EnvironmentVariableTarget.Machine));
+    _ = options.UseNpgsql(configuration.CurrentValue.GooglePostgreConnectionString);
 });
 
 builder.Services.AddHttpClient("tgclient")
     .AddTypedClient<ITelegramBotClient>((client, sp) =>
     {
         IOptionsMonitor<BotConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<BotConfiguration>>();
-        return new TelegramBotClient(Environment.GetEnvironmentVariable("SIRIUS_DOGS_TG_BOT_TOKEN", EnvironmentVariableTarget.Machine), client);
+        return new TelegramBotClient(configuration.CurrentValue.TgBotToken, client);
     });
 
 builder.Services.AddTransient<ITelegramService, TelegramService>();

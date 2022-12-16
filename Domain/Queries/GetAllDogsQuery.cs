@@ -33,7 +33,10 @@ namespace Domain.Queries
         }
         public async Task<GetAllDogsQueryResult> Handle(GetAllDogsQuery request, CancellationToken cancellationToken)
         {
-            List<Dog> allDogs = await _dbContext.Doges.OrderByDescending(d => d.Id).Include(d => d.Photos).ToListAsync(cancellationToken);
+            List<Dog> allDogs = await _dbContext.Doges
+                .OrderByDescending(d => d.Id)
+                .Include(d => d.Photos)
+                .ToListAsync(cancellationToken);
 
             return new GetAllDogsQueryResult
             {
