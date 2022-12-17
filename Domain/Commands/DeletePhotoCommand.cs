@@ -43,19 +43,14 @@ namespace Domain.Commands
                 };
             }
 
-            if (!await _dbContext.Images.AnyAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken))
+            Image photo = new()
             {
-                return new DeletePhotoCommandResult
-                {
-                    PhotoIsDeleted = false,
-                    Comment = "Image not found"
-                };
-            }
+                DogId = request.DogId,
+                PhotoPath = request.PhotoPath
+            };
 
-            Image photo = await _dbContext.Images.FirstOrDefaultAsync(i => i.DogId == request.DogId && i.PhotoPath == request.PhotoPath, cancellationToken);
-
-            _ = _dbContext.Remove(photo);
-            _ = _dbContext.SaveChanges();
+            _ = _dbContext.Images.Attach(photo);
+            _ = _dbContext.Images.Remove(photo);
 
             Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
             dog.LastUpdate = DateTime.UtcNow;

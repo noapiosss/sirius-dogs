@@ -6,8 +6,6 @@ using Contracts.Database;
 
 using MediatR;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace Domain.Commands
 {
     public class DeleteDogCommand : IRequest<DeleteDogCommandResult>
@@ -31,16 +29,7 @@ namespace Domain.Commands
         }
         public async Task<DeleteDogCommandResult> Handle(DeleteDogCommand request, CancellationToken cancellationToken = default)
         {
-            Dog dog = await _dbContext.Doges.FirstOrDefaultAsync(d => d.Id == request.DogId, cancellationToken);
-
-            if (dog == null)
-            {
-                return new DeleteDogCommandResult
-                {
-                    DeletingIsSuccessful = false,
-                    Comment = "Dog not found"
-                };
-            }
+            Dog dog = new() { Id = request.DogId };
 
             _ = _dbContext.Doges.Attach(dog);
             _ = _dbContext.Doges.Remove(dog);
