@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Api.Services.Interfaces;
 
-using Contracts.Http;
+using Contracts.Database;
 
 using Domain.Queries;
 
@@ -18,7 +13,6 @@ using MediatR;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InputFiles;
 
 namespace Api.Services;
 public class TelegramService : ITelegramService
@@ -34,7 +28,10 @@ public class TelegramService : ITelegramService
 
     public async Task HandleMessage(Update update, CancellationToken cancellationToken = default)
     {
-        if (update.Message == null) return;
+        if (update.Message == null)
+        {
+            return;
+        }
 
         var chatId = update.Message.Chat.Id;
 
@@ -42,7 +39,10 @@ public class TelegramService : ITelegramService
         {
             if (update.Message.Text.Equals("/start"))
             {
-                await _telegramBotClient.SendTextMessageAsync(chatId, "Welcome to our bot!", cancellationToken: cancellationToken);
+                await _telegramBotClient.SendTextMessageAsync(chatId,
+                    "Welcome to our bot!",
+                    cancellationToken: cancellationToken);
+
                 return;
             }
 
@@ -54,58 +54,37 @@ public class TelegramService : ITelegramService
                     $"- `/Search` to search dogs by your request\n"+
                     $"For example `/Search cute dog`\n";
 
-                await _telegramBotClient.SendTextMessageAsync(chatId, message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown, cancellationToken: cancellationToken);
+                await _telegramBotClient.SendTextMessageAsync(chatId,
+                    message,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                    cancellationToken: cancellationToken);
+
                 return;
             }
 
             if (update.Message.Text.Contains("/echo"))
-            {
-                if (update.Message.Text.Split(" ").Length < 2)
-                {
-                    await _telegramBotClient.SendTextMessageAsync(chatId, "...", cancellationToken: cancellationToken);
-                    return;                    
-                }
-                
-                await _telegramBotClient.SendTextMessageAsync(chatId, update.Message.Text.Split(" ", 2)[1], cancellationToken: cancellationToken);
+            {                
+                await _telegramBotClient.SendTextMessageAsync(chatId,
+                    update.Message.Text.Split(" ").Length < 2 ? "..." : update.Message.Text.Split(" ", 2)[1],
+                    cancellationToken: cancellationToken);
+
                 return;
             }
 
             if (update.Message.Text.Equals("/ShowAllDogs"))
             {
-                var query = new GetAllDogsQuery { };
-                var response = await _mediator.Send(query, cancellationToken);
-                var result = response.Dogs;
-
-                foreach (var dog in result)
-                {
-                    var message = $"*Name:* {dog.Name}\n" +
-                        $"*Breed:* {dog.Breed}\n" +
-                        $"*Size:* {dog.Size}\n" +
-                        $"*Age:* {GetAge(dog.BirthDate)}\n" +
-                        $"*About:* {dog.About}\n" +
-                        $"*Row:* {dog.Row}\n" +
-                        $"*Enclosure:* {dog.Enclosure}\n" +
-                        $"*Last update:* {dog.LastUpdate}";                        
-
-                    await _telegramBotClient.SendPhotoAsync(chatId,
-                        photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
-                        caption: message,
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        cancellationToken: cancellationToken);  
-                }
-
+                await HandleMessageShowAllDogsAsync(chatId, cancellationToken);
                 return;
             }
 
             if (update.Message.Text.Contains("/GetDogById"))
             {
-                if (update.Message.Text.Split(" ").Length < 2)
+                if (!int.TryParse(update.Message.Text.Split(" ", 2)[1], out int dogId))
                 {
                     await _telegramBotClient.SendTextMessageAsync(chatId, "Wrong request", cancellationToken: cancellationToken);
                     return;
                 }
 
-                var dogId = int.Parse(update.Message.Text.Split(" ", 2)[1]);
                 var query = new GetDogByIdQuery { DogId = dogId };
                 var response = await _mediator.Send(query, cancellationToken);
                 var dog = response.Dog;
@@ -116,47 +95,8 @@ public class TelegramService : ITelegramService
                     return;
                 }
 
-                var message = $"*Name:* {dog.Name}\n" +
-                        $"*Breed:* {dog.Breed}\n" +
-                        $"*Size:* {dog.Size}\n" +
-                        $"*Age:* {GetAge(dog.BirthDate)}\n" +
-                        $"*About:* {dog.About}\n" +
-                        $"*Row:* {dog.Row}\n" +
-                        $"*Enclosure:* {dog.Enclosure}\n" +
-                        $"*Last update:* {dog.LastUpdate}";                    
-
-                if (dog.Photos.Count != 0)
-                {
-                    List<InputMediaPhoto> media = new()
-                    {
-                        new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}"))
-                    };
-
-                    foreach (var photo in dog.Photos)
-                    {
-                        media.Add(new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{photo.PhotoPath}")));
-                    }
-
-                    media[0].Caption = message;
-
-                    var mediaGroupResponse = await _telegramBotClient.SendMediaGroupAsync(chatId,
-                        media: media,
-                        cancellationToken: cancellationToken);
-
-                    await _telegramBotClient.EditMessageCaptionAsync(chatId,
-                        messageId: mediaGroupResponse[0].MessageId,
-                        caption: mediaGroupResponse[0].Caption,
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        cancellationToken: cancellationToken);
-                    
-                    return;
-                }
-
-                await _telegramBotClient.SendPhotoAsync(chatId,
-                    photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
-                    caption: message,
-                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                    cancellationToken: cancellationToken); 
+                var message = GetDogInfo(dog); 
+                await SendDogMediaAsync(chatId, dog, message, cancellationToken);
 
                 return;
             }
@@ -189,47 +129,8 @@ public class TelegramService : ITelegramService
                 
                 foreach (var dog in dogs)
                 {
-                    var message = $"*Name:* {dog.Name}\n" +
-                        $"*Breed:* {dog.Breed}\n" +
-                        $"*Size:* {dog.Size}\n" +
-                        $"*Age:* {GetAge(dog.BirthDate)}\n" +
-                        $"*About:* {dog.About}\n" +
-                        $"*Row:* {dog.Row}\n" +
-                        $"*Enclosure:* {dog.Enclosure}\n" +
-                        $"*Last update:* {dog.LastUpdate}";                    
-
-                    if (dog.Photos.Count != 0)
-                    {
-                        List<InputMediaPhoto> media = new()
-                        {
-                            new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}"))
-                        };
-
-                        foreach (var photo in dog.Photos)
-                        {
-                            media.Add(new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{photo.PhotoPath}")));
-                        }
-
-                        media[0].Caption = message;
-
-                        var mediaGroupResponse = await _telegramBotClient.SendMediaGroupAsync(chatId,
-                            media: media,
-                            cancellationToken: cancellationToken);
-
-                        await _telegramBotClient.EditMessageCaptionAsync(chatId,
-                            messageId: mediaGroupResponse[0].MessageId,
-                            caption: mediaGroupResponse[0].Caption,
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                            cancellationToken: cancellationToken); 
-                        
-                        continue;
-                    }
-
-                    await _telegramBotClient.SendPhotoAsync(chatId,
-                        photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
-                        caption: message,
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        cancellationToken: cancellationToken);                
+                    var message = GetDogInfo(dog);
+                    await SendDogMediaAsync(chatId, dog, message, cancellationToken);
                 }
 
                 return;
@@ -238,6 +139,75 @@ public class TelegramService : ITelegramService
 
     }
 
+    
+
+    private async Task HandleMessageShowAllDogsAsync(long chatId, CancellationToken cancellationToken)
+    {
+        var query = new GetHomeDogsQuery { };
+        var response = await _mediator.Send(query, cancellationToken);
+        var result = response.Dogs;
+
+        foreach (var dog in result)
+        {
+            var message = GetDogInfo(dog);                        
+
+            await _telegramBotClient.SendPhotoAsync(chatId,
+                photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
+                caption: message,
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                cancellationToken: cancellationToken);  
+        }
+    }
+
+    private async Task SendDogMediaAsync(long chatId, Dog dog, string message, CancellationToken cancellationToken)
+    {
+        if (dog.Photos.Count != 0)
+        {
+            List<InputMediaPhoto> media = new()
+            {
+                new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}"))
+            };
+
+            foreach (var photo in dog.Photos)
+            {
+                media.Add(new InputMediaPhoto(new InputMedia($"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{photo.PhotoPath}")));
+            }
+
+            media[0].Caption = message;
+
+            var mediaGroupResponse = await _telegramBotClient.SendMediaGroupAsync(chatId,
+                media: media,
+                cancellationToken: cancellationToken);
+
+            await _telegramBotClient.EditMessageCaptionAsync(chatId,
+                messageId: mediaGroupResponse[0].MessageId,
+                caption: mediaGroupResponse[0].Caption,
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                cancellationToken: cancellationToken);
+            
+            return;
+        }
+
+        await _telegramBotClient.SendPhotoAsync(chatId,
+            photo: $"https://storage.googleapis.com/sirius_dogs_test/{dog.Id}/{dog.TitlePhoto}",
+            caption: message,
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+            cancellationToken: cancellationToken); 
+
+        return;
+    }
+
+    private string GetDogInfo(Dog dog)
+    {
+        return $"*Name:* {dog.Name}\n" +
+            $"*Breed:* {dog.Breed}\n" +
+            $"*Size:* {dog.Size}\n" +
+            $"*Age:* {GetAge(dog.BirthDate)}\n" +
+            $"*About:* {dog.About}\n" +
+            $"*Row:* {dog.Row}\n" +
+            $"*Enclosure:* {dog.Enclosure}\n" +
+            $"*Last update:* {dog.LastUpdate}"; 
+    }
     private static string GetAge(DateTime birthDate)
     {
         birthDate = birthDate.ToLocalTime();

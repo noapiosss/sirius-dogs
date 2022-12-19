@@ -23,11 +23,7 @@ namespace Api.Services
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // _ = _botConfiguration.CurrentValue.Domain;
-            // _ = _botConfiguration.CurrentValue.TgBotToken;
-
-            // return _telegramBotClient.SetWebhookAsync($"{domain}/bot/{token}",
-            return _telegramBotClient.SetWebhookAsync(_botConfiguration.CurrentValue.Domain,
+            return _telegramBotClient.SetWebhookAsync($"{_botConfiguration.CurrentValue.Domain}/api/bot",
                 allowedUpdates: Enumerable.Empty<UpdateType>(),
                 cancellationToken: cancellationToken);
         }

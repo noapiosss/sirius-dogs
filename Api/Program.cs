@@ -26,21 +26,33 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.Configure<AppConfiguration>(builder.Configuration);
-builder.Services.Configure<BotConfiguration>(builder.Configuration);
+builder.Services.Configure<AppConfiguration>(options =>
+{
+    options.PostgreConnectionString = builder.Configuration["SIRIUS_DOGS_DB_CONNECTION_STRING"];
+    options.BucketName = builder.Configuration["SIRIUS_DOGS_GOOGLE_BUCKET"];
+    options.CredentialFile = builder.Configuration["SIRIUS_DOGS_GOOGLE_CREDENTIAL_FILE"];
+});
+
+builder.Services.Configure<BotConfiguration>(options =>
+{
+    options.Domain = "https://ab21-193-93-79-231.eu.ngrok.io";
+    options.Token = builder.Configuration["SIRIUS_DOGS_TG_BOT_TOKEN"];
+});
+
 builder.Services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
 
 builder.Services.AddDomainServices((sp, options) =>
 {
     IOptionsMonitor<AppConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<AppConfiguration>>();
-    _ = options.UseNpgsql(configuration.CurrentValue.GooglePostgreConnectionString);
+    _ = options.UseNpgsql(configuration.CurrentValue.PostgreConnectionString);
 });
+
 
 builder.Services.AddHttpClient("tgclient")
     .AddTypedClient<ITelegramBotClient>((client, sp) =>
     {
         IOptionsMonitor<BotConfiguration> configuration = sp.GetRequiredService<IOptionsMonitor<BotConfiguration>>();
-        return new TelegramBotClient(configuration.CurrentValue.TgBotToken, client);
+        return new TelegramBotClient(configuration.CurrentValue.Token, client);
     });
 
 builder.Services.AddTransient<ITelegramService, TelegramService>();
