@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Api.Services;
+using Api;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,18 +27,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.Configure<AppConfiguration>(options =>
-{
-    options.PostgreConnectionString = builder.Configuration["SIRIUS_DOGS_DB_CONNECTION_STRING"];
-    options.BucketName = builder.Configuration["SIRIUS_DOGS_GOOGLE_BUCKET"];
-    options.CredentialFile = builder.Configuration["SIRIUS_DOGS_GOOGLE_CREDENTIAL_FILE"];
-});
-
-builder.Services.Configure<BotConfiguration>(options =>
-{
-    options.Domain = "https://ab21-193-93-79-231.eu.ngrok.io";
-    options.Token = builder.Configuration["SIRIUS_DOGS_TG_BOT_TOKEN"];
-});
+ReadEnv.Load();
+builder.Services.Configure<AppConfiguration>(builder.Configuration.GetSection("SIRIUSDOGS"));
+builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("TGBOT"));
 
 builder.Services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
 
