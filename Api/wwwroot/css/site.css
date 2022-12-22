@@ -103,6 +103,10 @@ html {
   color: rgb(168, 168, 168);
 }
 
+.pagination{
+  padding-top: 20px;
+}
+
 /* edit page */
 
 .edit-title-photo

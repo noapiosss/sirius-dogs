@@ -21,11 +21,14 @@ namespace Domain.Queries
         public int Row { get; init; }
         public int Enclosure { get; init; }
         public bool WentHome { get; init; }
+        public int DogsPerPage { get; init; }
+        public int Page { get; init; }
     }
 
     public class SearchDogQueryResult
     {
         public ICollection<Dog> Dogs { get; init; }
+        public int DogsCount { get; init; }
     }
 
     internal class SearchDogQueryHandler : IRequestHandler<SearchDogQuery, SearchDogQueryResult>
@@ -43,6 +46,17 @@ namespace Domain.Queries
             DateTime minBirthDate = DateTime.UtcNow.AddMonths(-request.MaxAge);
             minBirthDate = minBirthDate.AddDays(-minBirthDate.Day);
 
+            int dogsCount = await _dbContext.Doges
+                .Where(d => d.WentHome == request.WentHome &&
+                    d.BirthDate.Date >= minBirthDate.Date &&
+                    (request.Row == 0 || d.Row == request.Row) &&
+                    (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
+                    (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
+                .CountAsync(cancellationToken);
+
             List<Dog> dogs = await _dbContext.Doges
                 .Where(d => d.WentHome == request.WentHome &&
                     d.BirthDate.Date >= minBirthDate.Date &&
@@ -52,13 +66,14 @@ namespace Domain.Queries
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
-                .Include(d => d.Photos)
-                .OrderByDescending(d => d.Id)
+                .Skip((request.Page - 1) * request.DogsPerPage)
+                .Take(request.DogsPerPage)
                 .ToListAsync(cancellationToken);
 
             return new SearchDogQueryResult
             {
-                Dogs = dogs
+                Dogs = dogs,
+                DogsCount = dogsCount
             };
         }
     }

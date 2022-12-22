@@ -7,11 +7,11 @@
 
 @inherits Helper<TModel>
 
-<form asp-action="Index" method="get">
+<form>
     
     <div class="search-from form-group" id="search-form">
         <input name="searchRequest" type="search" class="form-control search-request" id="search-request" />
-        <input type="submit" value="Search" class="btn btn-primary search-request-btn" id="search-request-btn" />
+        <input type="button" value="Search" class="btn btn-primary search-request-btn" id="search-request-btn" />
     </div>
 
     <p class="show-filters-button" id="show-filters-button">show filters</p>
@@ -117,6 +117,81 @@ else
         }
     }
     </div>
+    
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @if(ViewBag.Page > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page-1) aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @if(ViewBag.Page > 2)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page-2)>
+                            @(ViewBag.Page - 2)
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page-1)>
+                        @(ViewBag.Page - 1)
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link disabled" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page-1) aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+
+            <li class="page-item">
+                <a class="page-link active" href="">
+                    @ViewBag.Page
+                </a>
+            </li>
+
+            @if(ViewBag.Page * ViewBag.DogsPerPage < ViewBag.DogsCount)
+            {
+                <li class="page-item">
+                    <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page+1)>
+                        @(ViewBag.Page + 1)
+                    </a>
+                </li>
+
+                @if((ViewBag.Page + 1) * ViewBag.DogsPerPage < ViewBag.DogsCount)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page+2)>
+                            @(ViewBag.Page + 2)
+                        </a>
+                    </li>                
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page+1) aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link disabled" href=@PaginationHref(ViewContext.HttpContext.Request.QueryString.Value, ViewBag.Page+1) aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+                            
+        </ul>
+    </nav>
 }
 
 <script src="~/js/search.js" ></script>

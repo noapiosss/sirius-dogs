@@ -23,13 +23,28 @@ public abstract class Helper<TModel> : RazorPage<TModel>
         return IsPlural(months) ? $"{months} months" : $"{months} month";
     }
 
-    public int GetMonthDifference(DateTime birthDate)
-    {
-        return ((DateTime.Now.Year - birthDate.Year) * 12) + DateTime.Now.Month - birthDate.Month;
-    }
-
     private static bool IsPlural(int number)
     {
         return number % 100 == 11 || number % 10 != 1;
+    }
+
+    public string PaginationHref(string query, int page)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            return $"?page={page}";
+        }
+
+        while (query[^1] != '=')
+        {
+            _ = query.Remove(query.Length - 1);
+        }
+
+        return query + page;
+    }
+
+    public int GetMonthDifference(DateTime birthDate)
+    {
+        return ((DateTime.Now.Year - birthDate.Year) * 12) + DateTime.Now.Month - birthDate.Month;
     }
 }

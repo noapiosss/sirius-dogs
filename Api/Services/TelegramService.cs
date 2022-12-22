@@ -110,13 +110,9 @@ public class TelegramService : ITelegramService
                 }
 
                 var searchRequest = update.Message.Text.Split(" ", 2)[1];
-                var query = new SearchDogQuery
+                var query = new TelegramSearchDogQuery
                 {
-                    SearchRequest = searchRequest,
-                    MaxAge = 1000,
-                    Row = 0,
-                    Enclosure = 0,
-                    WentHome = false
+                    SearchRequest = searchRequest
                 };
                 var response = await _mediator.Send(query, cancellationToken);
                 var dogs = response.Dogs;
@@ -143,7 +139,11 @@ public class TelegramService : ITelegramService
 
     private async Task HandleMessageShowAllDogsAsync(long chatId, CancellationToken cancellationToken)
     {
-        var query = new GetHomeDogsQuery { };
+        var query = new GetDogsByWentHomeQuery()
+        {
+            WentHome = true,
+            Page = 1
+        };
         var response = await _mediator.Send(query, cancellationToken);
         var result = response.Dogs;
 

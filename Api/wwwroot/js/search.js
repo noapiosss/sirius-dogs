@@ -2,10 +2,23 @@ const ageSlider = document.getElementById("age-slider");
 const selectedAgeLabel = document.getElementById("selected-age");
 const showFiltersBtn = document.getElementById("show-filters-button");
 const searchFilters = document.getElementById("search-filters");
+const searchBtn = document.getElementById("search-request-btn");
+
+searchBtn.onclick = () =>
+{
+    var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
+
+    window.location.href = `${window.location.origin}/Dogs/Search?` + 
+    `searchRequest=${document.getElementById("search-request").value}&` +
+    `filterAge=${monthCount}&` +
+    `filterRow=${document.getElementById("row-filter").value}&` +
+    `filterEnclosure=${document.getElementById("enclousre-filter").value}&` +
+    `page=1`;
+}
 
 document.onload = InitiateSlider();
 
-document.getElementById("search-request").onfocus = () => { document.getElementById("search-form").style.boxShadow = "0px 0px 0px 5px rgba(0, 122, 255, 0.5)"; }
+document.getElementById("search-request").onfocus = () => { document.getElementById("search-form").style.boxShadow = "0px 0px 5px 2px rgba(0, 122, 255, 0.5)"; }
 document.getElementById("search-request").onblur = () => { document.getElementById("search-form").style.boxShadow = ""; }
 
 showFiltersBtn.onclick = async () => 
@@ -52,7 +65,7 @@ async function InitiateSlider()
     ageSlider.setAttribute("min", 0);
     ageSlider.setAttribute("max", birthDates.length-1);
 
-    if (!window.location.href.includes("?"))
+    if (!window.location.href.includes("searchRequest"))
     {
         var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
         document.getElementById("filter-age-monthnumber").value = monthCount;
@@ -89,4 +102,5 @@ async function InitiateSlider()
             selectedAgeLabel.innerHTML = `${Math.round(monthCount/12)} year(s)`;
         }
     }
+
 }

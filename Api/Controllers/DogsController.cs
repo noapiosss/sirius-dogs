@@ -25,7 +25,7 @@ namespace Api.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ICloudStorage _googleStorage;
-
+        private readonly int _dogsPerPage = 2;
         public DogsController(IMediator mediator, ICloudStorage googleStorage)
         {
             _mediator = mediator;
@@ -37,23 +37,39 @@ namespace Api.Controllers
             return View(dogs);
         }
 
-        public async Task<IActionResult> Shelter(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Shelter([FromQuery] int page = 1, CancellationToken cancellationToken = default)
         {
-            GetShelterDogsQuery query = new() { };
-            GetShelterDogsQueryResult result = await _mediator.Send(query, cancellationToken);
+            GetDogsByWentHomeQuery query = new()
+            {
+                WentHome = false,
+                DogsPerPage = _dogsPerPage,
+                Page = page
+            };
+            GetDogsByWentHomeQueryResult result = await _mediator.Send(query, cancellationToken);
+
+            ViewBag.DogsCount = result.DogsCount;
+            ViewBag.DogsPerPage = _dogsPerPage;
+            ViewBag.Page = page;
+            return View("Index", result.Dogs);
+        }
+        public async Task<IActionResult> Home([FromQuery] int page = 1, CancellationToken cancellationToken = default)
+        {
+            GetDogsByWentHomeQuery query = new()
+            {
+                WentHome = true,
+                DogsPerPage = _dogsPerPage,
+                Page = page
+            };
+            GetDogsByWentHomeQueryResult result = await _mediator.Send(query, cancellationToken);
+
+            ViewBag.DogsCount = result.DogsCount;
+            ViewBag.DogsPerPage = _dogsPerPage;
+            ViewBag.Page = page;
 
             return View("Index", result.Dogs);
         }
-        public async Task<IActionResult> Home(CancellationToken cancellationToken = default)
-        {
-            GetHomeDogsQuery query = new() { };
-            GetHomeDogsQueryResult result = await _mediator.Send(query, cancellationToken);
 
-            return View("Index", result.Dogs);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Index([FromForm] string something, string searchRequest, int filterAge, int filterRow, int filterEnclosure, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Search([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
         {
             SearchDogQuery query = new()
             {
@@ -64,12 +80,18 @@ namespace Api.Controllers
                 WentHome = Request.Headers["Referer"]
                     .ToString()
                     .Split("/")
-                    .Last() == "Home"
+                    .Last() == "Home",
+                DogsPerPage = _dogsPerPage,
+                Page = page
             };
 
             SearchDogQueryResult result = await _mediator.Send(query, cancellationToken);
 
-            return View(result.Dogs);
+            ViewBag.DogsCount = result.DogsCount;
+            ViewBag.DogsPerPage = _dogsPerPage;
+            ViewBag.Page = page;
+
+            return View("Index", result.Dogs);
         }
 
         public IActionResult Create()
