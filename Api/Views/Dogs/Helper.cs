@@ -37,7 +37,7 @@ public abstract class Helper<TModel> : RazorPage<TModel>
 
         while (query[^1] != '=')
         {
-            _ = query.Remove(query.Length - 1);
+            query = query.Remove(query.Length - 1);
         }
 
         return query + page;

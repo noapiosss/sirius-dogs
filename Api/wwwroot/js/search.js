@@ -7,7 +7,7 @@ const searchBtn = document.getElementById("search-request-btn");
 searchBtn.onclick = () =>
 {
     var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
-
+    
     window.location.href = `${window.location.origin}/Dogs/Search?` + 
     `searchRequest=${document.getElementById("search-request").value}&` +
     `filterAge=${monthCount}&` +

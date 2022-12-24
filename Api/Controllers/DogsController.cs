@@ -50,8 +50,10 @@ namespace Api.Controllers
             ViewBag.DogsCount = result.DogsCount;
             ViewBag.DogsPerPage = _dogsPerPage;
             ViewBag.Page = page;
+
             return View("Index", result.Dogs);
         }
+
         public async Task<IActionResult> Home([FromQuery] int page = 1, CancellationToken cancellationToken = default)
         {
             GetDogsByWentHomeQuery query = new()

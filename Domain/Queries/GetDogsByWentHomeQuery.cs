@@ -40,7 +40,7 @@ namespace Domain.Queries
         {
             int dogsCount = await _dbContext.Doges.Where(d => d.WentHome == request.WentHome).CountAsync(cancellationToken);
 
-            List<Dog> allDogs = await _dbContext.Doges.AnyAsync(cancellationToken)
+            List<Dog> dogs = await _dbContext.Doges.AnyAsync(cancellationToken)
                 ? await _dbContext.Doges
                     .Where(d => d.WentHome == request.WentHome)
                     .Skip((request.Page - 1) * request.DogsPerPage)
@@ -50,7 +50,7 @@ namespace Domain.Queries
 
             return new GetDogsByWentHomeQueryResult
             {
-                Dogs = allDogs,
+                Dogs = dogs,
                 DogsCount = dogsCount
             };
         }
