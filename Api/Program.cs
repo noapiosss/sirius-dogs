@@ -27,7 +27,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-ReadEnv.Load();
 builder.Services.Configure<AppConfiguration>(builder.Configuration.GetSection("SIRIUSDOGS"));
 builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("TGBOT"));
 
