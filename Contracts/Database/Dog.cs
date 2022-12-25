@@ -16,6 +16,9 @@ namespace Contracts.Database
         [Column("name")]
         public string Name { get; set; }
 
+        [Column("gender")]
+        public string Gender { get; set; }
+
         [Column("breed")]
         public string Breed { get; set; }
 
