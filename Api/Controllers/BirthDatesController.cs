@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +7,6 @@ using Domain.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -27,11 +24,6 @@ namespace Api.Controllers
         [HttpGet("shelter")]
         public async Task<IActionResult> GetBirthDatesShelter(CancellationToken cancellationToken = default)
         {
-            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-            {
-                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-            }
-
             GetDogsBirthDatesQuery getDogsBirthDatesQuery = new()
             {
                 WentHome = false
@@ -49,11 +41,6 @@ namespace Api.Controllers
         [HttpGet("home")]
         public async Task<IActionResult> GetBirthDatesHome(CancellationToken cancellationToken = default)
         {
-            if (HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name) == null)
-            {
-                return Redirect($"{Request.Headers["Origin"]}/Session/Signin?{Request.Path}");
-            }
-
             GetDogsBirthDatesQuery getDogsBirthDatesQuery = new()
             {
                 WentHome = true
