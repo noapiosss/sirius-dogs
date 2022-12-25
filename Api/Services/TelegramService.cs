@@ -37,26 +37,13 @@ public class TelegramService : ITelegramService
 
         if (update.Message.Text != null)
         {
-            if (update.Message.Text.Equals("/start"))
+            if (update.Message.Text.Equals("/start") || update.Message.Text.Equals("/help"))
             {
-                await _telegramBotClient.SendTextMessageAsync(chatId,
-                    "Welcome to our bot!",
-                    cancellationToken: cancellationToken);
-
-                return;
-            }
-
-            if (update.Message.Text.Equals("/help"))
-            {
-                var message = $"- `/ShowAllDogs` to see overview on all dogs\n" + 
-                    // $"- `/GetDogById` to see detail about dog with the specified id\n" +
-                    // $"For example: `/GetDogById 9`\n" +
-                    $"- `/Search` to search dogs by your request\n"+
-                    $"For example `/Search cute dog`\n";
+                var message = $"- `/Search` to search dogs by your request\n"+
+                    $"For example `/Search cute dog`";
 
                 await _telegramBotClient.SendTextMessageAsync(chatId,
                     message,
-                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     cancellationToken: cancellationToken);
 
                 return;
@@ -197,7 +184,7 @@ public class TelegramService : ITelegramService
         return;
     }
 
-    private string GetDogInfo(Dog dog)
+    private static string GetDogInfo(Dog dog)
     {
         return $"*Name:* {dog.Name}\n" +
             $"*Breed:* {dog.Breed}\n" +
