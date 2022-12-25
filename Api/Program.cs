@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Api.Services;
-using Api;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +26,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-ReadEnv.Load();
 builder.Services.Configure<AppConfiguration>(builder.Configuration.GetSection("SIRIUSDOGS"));
 builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("TGBOT"));
 
