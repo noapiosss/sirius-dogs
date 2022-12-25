@@ -43,6 +43,7 @@ namespace Domain.Queries
             List<Dog> dogs = await _dbContext.Doges.AnyAsync(cancellationToken)
                 ? await _dbContext.Doges
                     .Where(d => d.WentHome == request.WentHome)
+                    .OrderByDescending(d => d.Id)
                     .Skip((request.Page - 1) * request.DogsPerPage)
                     .Take(request.DogsPerPage)
                     .ToListAsync(cancellationToken)

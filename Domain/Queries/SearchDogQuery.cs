@@ -66,6 +66,7 @@ namespace Domain.Queries
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
+                .OrderByDescending(d => d.Id)
                 .Skip((request.Page - 1) * request.DogsPerPage)
                 .Take(request.DogsPerPage)
                 .ToListAsync(cancellationToken);
