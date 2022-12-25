@@ -3,11 +3,6 @@ const editBtn = document.getElementById("edit-button");
 const backToListBtn = document.getElementById("back-to-list-button");
 const deleteBtn = document.getElementById("delete-button");
 
-deleteBtn.onclick = () => 
-{
-    window.location.href = `${window.location.origin}/Dogs/Delete/${deleteBtn.getAttribute("dogId")}`;
-}
-
 backToListBtn.onclick = () => 
 {
     if (backToListBtn.getAttribute("wentHome"))
@@ -18,6 +13,11 @@ backToListBtn.onclick = () =>
     {
         window.location.href = `${window.location.origin}/Dogs/Shelter`;
     }
+}
+
+deleteBtn.onclick = () => 
+{
+    window.location.href = `${window.location.origin}/Dogs/Delete/${deleteBtn.getAttribute("dogId")}`;
 }
 
 statusBtn.onclick = async () =>
