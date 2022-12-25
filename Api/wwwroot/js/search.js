@@ -2,19 +2,6 @@ const ageSlider = document.getElementById("age-slider");
 const selectedAgeLabel = document.getElementById("selected-age");
 const showFiltersBtn = document.getElementById("show-filters-button");
 const searchFilters = document.getElementById("search-filters");
-const searchBtn = document.getElementById("search-request-btn");
-
-searchBtn.onclick = () =>
-{
-    var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
-    
-    window.location.href = `${window.location.origin}/Dogs/Search?` + 
-    `searchRequest=${document.getElementById("search-request").value}&` +
-    `filterAge=${monthCount}&` +
-    `filterRow=${document.getElementById("row-filter").value}&` +
-    `filterEnclosure=${document.getElementById("enclousre-filter").value}&` +
-    `page=1`;
-}
 
 document.onload = InitiateSlider();
 
@@ -88,9 +75,6 @@ async function InitiateSlider()
         document.getElementById("search-request").value = searchRequest;
         document.getElementById("row-filter").value = filterRow;
         document.getElementById("enclousre-filter").value = filterEnclosure;
-
-        searchFilters.hidden = false;
-        showFiltersBtn.innerHTML = "hide filters"
 
         document.getElementById("filter-age-monthnumber").value = monthCount;
         if (monthCount < 12)

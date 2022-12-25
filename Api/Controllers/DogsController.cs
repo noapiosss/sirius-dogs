@@ -25,7 +25,7 @@ namespace Api.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ICloudStorage _googleStorage;
-        private readonly int _dogsPerPage = 2;
+        private readonly int _dogsPerPage = 20;
         public DogsController(IMediator mediator, ICloudStorage googleStorage)
         {
             _mediator = mediator;

@@ -35,6 +35,11 @@ public abstract class Helper<TModel> : RazorPage<TModel>
             return $"?page={page}";
         }
 
+        if (!query.Contains("page"))
+        {
+            return $"{query}&page={page}";
+        }
+
         while (query[^1] != '=')
         {
             query = query.Remove(query.Length - 1);
