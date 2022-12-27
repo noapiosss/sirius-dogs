@@ -55,6 +55,7 @@ namespace Domain.Commands
             }
 
             dog.Name = request.Dog.Name;
+            dog.Gender = request.Dog.Gender;
             dog.Breed = request.Dog.Breed;
             dog.Size = request.Dog.Size;
             dog.BirthDate = request.Dog.BirthDate.ToUniversalTime();

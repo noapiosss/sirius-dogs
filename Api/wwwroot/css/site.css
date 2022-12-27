@@ -95,13 +95,18 @@ html {
   transform: scale(1.05);
 }
 
-.name-age {
+#card-body{
+  padding-bottom: 0px;
+}
+
+.gender-age {
   width: 100%;
   display: inline-block;
 }
 
-.name-container{
+.gender-container{
   float: left;
+  color: rgb(168, 168, 168);
 }
 
 .age-container{

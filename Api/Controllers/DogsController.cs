@@ -136,6 +136,7 @@ namespace Api.Controllers
             AddDogCommand addDogCommand = new()
             {
                 Name = dog.Name,
+                Gender = dog.Gender,
                 Breed = dog.Breed,
                 Size = dog.Size,
                 BirthDate = dog.BirthDate,

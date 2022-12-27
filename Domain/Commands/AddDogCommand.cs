@@ -13,6 +13,7 @@ namespace Domain.Commands
     public class AddDogCommand : IRequest<AddDogCommandResult>
     {
         public string Name { get; init; }
+        public string Gender { get; init; }
         public string Breed { get; init; }
         public string Size { get; init; }
         public DateTime BirthDate { get; init; }
@@ -50,6 +51,7 @@ namespace Domain.Commands
             Dog dog = new()
             {
                 Name = request.Name,
+                Gender = request.Gender,
                 Breed = request.Breed,
                 Size = request.Size,
                 BirthDate = request.BirthDate.ToUniversalTime(),
