@@ -178,6 +178,12 @@ html {
 
 /* SEARCH */
 
+.toggle-menu-vertical-separator{
+  margin-top: 10px;
+  margin-bottom: 0;
+  filter: invert();
+}
+
 .search-form{
   width: 100%;
   border-radius: 10px;

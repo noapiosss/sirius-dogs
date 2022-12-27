@@ -24,6 +24,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarNav">
+                    
+                    <hr class="toggle-menu-vertical-separator">
                     <ul class="navbar-nav flex-grow-1">
                         @if(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value != null)
                         {
@@ -38,6 +40,7 @@
                             <a class="nav-link" id="nav-link-home" asp-area="" asp-controller="Dogs" asp-action="Home">Home Dogs</a>
                         </li>
                     </ul>
+                    <hr class="toggle-menu-vertical-separator">
                     <span class="navbar-text" id="session-info">
                         @if(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value != null)
                         {                                
@@ -46,7 +49,7 @@
                         }
                         else
                         {
-                            <a class="sign-in-link" id="sign-out-link" href="/Session/Signin">[sign-in]</a>                                
+                            <a class="sign-in-link" id="sign-out-link" href="/Session/Signin">Sign In</a>                                
                         }
                     </span>             
                 </div>
