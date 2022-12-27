@@ -37,41 +37,67 @@ namespace Api.Controllers
             return View(dogs);
         }
 
-        public async Task<IActionResult> Shelter([FromQuery] int page = 1, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Shelter([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(searchRequest) && filterAge == 0 && filterAge == 0 && filterEnclosure == 0)
+            {
+                GetDogsByWentHomeQueryResult result = await GetDogs(false, page, cancellationToken);
+
+                ViewBag.DogsCount = result.DogsCount;
+                ViewBag.DogsPerPage = _dogsPerPage;
+                ViewBag.Page = page;
+
+                return View("Index", result.Dogs);
+            }
+            else
+            {
+                SearchDogQueryResult result = await Search(searchRequest, filterAge, filterRow, filterEnclosure, page, false, cancellationToken);
+
+                ViewBag.DogsCount = result.DogsCount;
+                ViewBag.DogsPerPage = _dogsPerPage;
+                ViewBag.Page = page;
+
+                return View("Index", result.Dogs);
+            }
+        }
+
+        public async Task<IActionResult> Home([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(searchRequest) && filterAge == 0 && filterAge == 0 && filterEnclosure == 0)
+            {
+                GetDogsByWentHomeQueryResult result = await GetDogs(true, page, cancellationToken);
+
+                ViewBag.DogsCount = result.DogsCount;
+                ViewBag.DogsPerPage = _dogsPerPage;
+                ViewBag.Page = page;
+
+                return View("Index", result.Dogs);
+            }
+            else
+            {
+                SearchDogQueryResult result = await Search(searchRequest, filterAge, filterRow, filterEnclosure, page, true, cancellationToken);
+
+                ViewBag.DogsCount = result.DogsCount;
+                ViewBag.DogsPerPage = _dogsPerPage;
+                ViewBag.Page = page;
+
+                return View("Index", result.Dogs);
+            }
+        }
+
+        private async Task<GetDogsByWentHomeQueryResult> GetDogs(bool wentHome, int page, CancellationToken cancellationToken)
         {
             GetDogsByWentHomeQuery query = new()
             {
-                WentHome = false,
+                WentHome = wentHome,
                 DogsPerPage = _dogsPerPage,
                 Page = page
             };
-            GetDogsByWentHomeQueryResult result = await _mediator.Send(query, cancellationToken);
 
-            ViewBag.DogsCount = result.DogsCount;
-            ViewBag.DogsPerPage = _dogsPerPage;
-            ViewBag.Page = page;
-
-            return View("Index", result.Dogs);
+            return await _mediator.Send(query, cancellationToken);
         }
 
-        public async Task<IActionResult> Home([FromQuery] int page = 1, CancellationToken cancellationToken = default)
-        {
-            GetDogsByWentHomeQuery query = new()
-            {
-                WentHome = true,
-                DogsPerPage = _dogsPerPage,
-                Page = page
-            };
-            GetDogsByWentHomeQueryResult result = await _mediator.Send(query, cancellationToken);
-
-            ViewBag.DogsCount = result.DogsCount;
-            ViewBag.DogsPerPage = _dogsPerPage;
-            ViewBag.Page = page;
-
-            return View("Index", result.Dogs);
-        }
-
-        public async Task<IActionResult> Search([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
+        private async Task<SearchDogQueryResult> Search(string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page, bool wentHome, CancellationToken cancellationToken)
         {
             SearchDogQuery query = new()
             {
@@ -79,21 +105,12 @@ namespace Api.Controllers
                 MaxAge = filterAge,
                 Row = filterRow,
                 Enclosure = filterEnclosure,
-                WentHome = Request.Headers["Referer"]
-                    .ToString()
-                    .Split("/")
-                    .Last() == "Home",
+                WentHome = wentHome,
                 DogsPerPage = _dogsPerPage,
                 Page = page
             };
 
-            SearchDogQueryResult result = await _mediator.Send(query, cancellationToken);
-
-            ViewBag.DogsCount = result.DogsCount;
-            ViewBag.DogsPerPage = _dogsPerPage;
-            ViewBag.Page = page;
-
-            return View("Index", result.Dogs);
+            return await _mediator.Send(query, cancellationToken);
         }
 
         public IActionResult Create()

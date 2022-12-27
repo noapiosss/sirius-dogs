@@ -85,8 +85,14 @@ html {
   padding-top: 20px;
 }
 
+.card{
+  transition: all .2s ease-in-out;
+}
+
 .card:hover {
-  box-shadow: 0px 0px 10px 5px rgba(107, 193, 255, 0.555);
+  box-shadow: 0px 0px 5px 3px rgba(0, 149, 255, 0.623);
+  border-color: rgba(0, 149, 255, 0.719);
+  transform: scale(1.05);
 }
 
 .name-age {
@@ -167,21 +173,25 @@ html {
 
 /* SEARCH */
 
-.search-from{
+.search-form{
+  width: 100%;
   border-radius: 10px;
   display: flex;
 }
 
 #search-request {
+  float: left;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
 #search-request:focus {
+  border-color: rgba(0, 123, 255, 0.459);
   box-shadow: none;
 }
 
 #search-request-btn {
+  float: right;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -228,26 +238,27 @@ html {
 
 /* SIGN OUT */
 
-.session-info{
-  display: flex;
+#session-info{
+  display: inline-flex;
+  padding-left: 5px;
 }
 
 .username-info{
-  float: left;
-  color: white;
+  color: white;  
+  padding-left: 5px;
   margin: auto;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
-.sign-in-link, .sign-out-link{
-  float: right;
+#sign-in-link, #sign-out-link{
+  margin: auto;
   padding: 5px;
   border-radius: 10px;
   color: white;
   text-decoration: none;
 }
 
-.sign-in-link:hover, .sign-out-link:hover{
+#sign-in-link:hover, #sign-out-link:hover{
   cursor: pointer;
   background-color: rgb(80, 138, 255);
   color: white;

@@ -19,7 +19,7 @@ showFiltersBtn.onclick = async () =>
 
 ageSlider.oninput = function setLabelValue()
 {
-    var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
+    var monthCount = birthDates[ageSlider.value];
     document.getElementById("filter-age-monthnumber").value = monthCount;
     if (monthCount < 12)
     {
@@ -48,13 +48,17 @@ async function InitiateSlider()
         .then(res => res.birthDates);
 
     birthDates.sort().reverse();
+    for (let i = 0; i<birthDates.length; i++)
+    {
+        birthDates[i] = monthDiff(new Date(birthDates[i]), new Date(Date.now()))
+    }
 
     ageSlider.setAttribute("min", 0);
     ageSlider.setAttribute("max", birthDates.length-1);
 
     if (!window.location.href.includes("searchRequest"))
     {
-        var monthCount = monthDiff(new Date(birthDates[ageSlider.value]), new Date(Date.now()));
+        var monthCount = birthDates[ageSlider.value];
         document.getElementById("filter-age-monthnumber").value = monthCount;
         if (monthCount < 12)
         {
@@ -85,6 +89,8 @@ async function InitiateSlider()
         {
             selectedAgeLabel.innerHTML = `${Math.round(monthCount/12)} year(s)`;
         }
+
+        ageSlider.value = birthDates.indexOf(Number(monthCount));
     }
 
 }

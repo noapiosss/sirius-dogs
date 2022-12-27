@@ -31,17 +31,20 @@ a {
 }
 
 #nav-link-add-dog, #nav-link-shelter, #nav-link-home{
+    width: fit-content;
     color: white;
     border-radius: 10px;
     margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #navbar-brand:hover, #nav-link-add-dog:hover, #nav-link-shelter:hover, #nav-link-home:hover{
     background-color: rgb(80, 138, 255);
 }
 
-#nav-bar{   
-    background-color: rgb(42, 114, 255);
+.navbar-toggler{
+    filter: invert();
 }
 
 .border-top {
