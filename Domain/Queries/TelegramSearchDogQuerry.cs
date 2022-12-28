@@ -37,13 +37,15 @@ namespace Domain.Queries
         {
             string searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
 
+            string gender = searchRequest.Contains("female") ? "Female" : searchRequest.Contains("male") ? "Male" : "Any";
+
             List<Dog> dogs = await _dbContext.Doges
                 .Where(d => !d.WentHome &&
+                    (gender == "Any" || d.Gender == gender) &&
                     (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
-                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%") ||
-                    EF.Functions.Like(d.Gender.ToLower(), $"%{searchRequest}")))
+                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
                 .Include(d => d.Photos)
                 .ToListAsync(cancellationToken);
 

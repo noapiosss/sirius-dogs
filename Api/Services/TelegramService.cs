@@ -188,7 +188,7 @@ public class TelegramService : ITelegramService
     {
         return $"*Name:* {dog.Name}\n" +
             $"*Breed:* {dog.Breed}\n" +
-            $"*Breed:* {dog.Gender}" +
+            $"*Breed:* {dog.Gender}\n" +
             $"*Size:* {dog.Size}\n" +
             $"*Age:* {GetAge(dog.BirthDate)}\n" +
             $"*About:* {dog.About}\n" +
