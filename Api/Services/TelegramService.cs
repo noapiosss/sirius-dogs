@@ -39,8 +39,8 @@ public class TelegramService : ITelegramService
         {
             if (update.Message.Text.Equals("/start") || update.Message.Text.Equals("/help"))
             {
-                var message = $"- `/Search` to search dogs by your request\n"+
-                    $"For example `/Search cute dog`";
+                var message = $"- `/search` to search dogs by your request\n"+
+                    $"For example `/search cute dog`";
 
                 await _telegramBotClient.SendTextMessageAsync(chatId,
                     message,
@@ -88,6 +88,18 @@ public class TelegramService : ITelegramService
                 return;
             }
 
+
+            if (update.Message.Text.ToLower().Equals("/search"))
+            {
+                var message = "To search dogs send message in this format:\n\n" +
+                    "/search {your search request}";
+
+                await _telegramBotClient.SendTextMessageAsync(chatId,
+                    message,
+                    cancellationToken: cancellationToken);
+
+                return;
+            }
             if (update.Message.Text.ToLower().Contains("/search"))
             {
                 if (update.Message.Text.Split(" ").Length < 2)
