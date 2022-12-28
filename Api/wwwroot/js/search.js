@@ -14,7 +14,9 @@ showFiltersBtn.onclick = async () =>
     if (!searchFilters.hidden)
     {
         showFiltersBtn.innerHTML = "hide filters"
+        return;
     }
+    showFiltersBtn.innerHTML = "show filters"
 }
 
 ageSlider.oninput = function setLabelValue()
@@ -71,14 +73,18 @@ async function InitiateSlider()
     }
     else
     {
-        var searchRequest = decodeURIComponent(window.location.href.split("?")[1].split("&")[0].split("=")[1]);
-        var monthCount = window.location.href.split("?")[1].split("&")[1].split("=")[1];
-        var filterRow = window.location.href.split("?")[1].split("&")[2].split("=")[1];
-        var filterEnclosure = window.location.href.split("?")[1].split("&")[3].split("=")[1];
+        var searchRequest = decodeURIComponent(window.location.href.split("?")[1].split("&").filter(n => n.includes("searchRequest"))[0].split("=")[1]);
+        var monthCount = window.location.href.split("?")[1].split("&").filter(n => n.includes("age"))[0].split("=")[1];
+        var filterRow = window.location.href.split("?")[1].split("&").filter(n => n.includes("row"))[0].split("=")[1];
+        var filterEnclosure = window.location.href.split("?")[1].split("&").filter(n => n.includes("enclosure"))[0].split("=")[1];
+        var gender = window.location.href.split("?")[1].split("&").filter(n => n.includes("gender"))[0].split("=")[1];
+        var size = window.location.href.split("?")[1].split("&").filter(n => n.includes("size"))[0].split("=")[1];
 
         document.getElementById("search-request").value = searchRequest;
         document.getElementById("row-filter").value = filterRow;
         document.getElementById("enclousre-filter").value = filterEnclosure;
+        document.getElementById("gender-filter").value = gender;
+        document.getElementById("size-filter").value = size;
 
         document.getElementById("filter-age-monthnumber").value = monthCount;
         if (monthCount < 12)

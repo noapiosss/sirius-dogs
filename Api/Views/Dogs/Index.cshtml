@@ -20,7 +20,7 @@
             Age
             <br>
             <input id="age-slider" class="multi-range age-slider" type="range" />
-            <input name="filterAge" id="filter-age-monthnumber" type="number" hidden/>
+            <input name="age" id="filter-age-monthnumber" type="number" hidden/>
             <br>
             <label id="selected-age"></label>
             @if(Context.Request.Path.ToString().Split("/").Last().ToLower() == "home")
@@ -40,15 +40,36 @@
                 var birthDates;
             </script>
         </div>
+        <div class="filter-gender">
+            Gender
+            <br>
+            <select name="gender" class="gender-fitler" id="gender-filter">
+                <option selected>Any</option>
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </div>
+        <div class="filter-size">
+            Size
+            <br>
+            <select name="size" class="gender-fitler" id="size-filter">
+                <option selected>Any</option>
+                <option>Extra small</option>
+                <option>Small</option>
+                <option>Medium</option>
+                <option>Large</option>
+                <option>Extra large</option>
+            </select>
+        </div>
         <div class="filter-row">
             Row
             <br>
-            <input name="filterRow" id="row-filter" class="row-filter" type="number" />
+            <input name="row" id="row-filter" class="row-filter" type="number" />
         </div>
         <div class="filter-enclosure">
             Enclosure
             <br>
-            <input name="filterEnclosure" id="enclousre-filter" class="encosure-filter" type="number" />
+            <input name="enclosure" id="enclousre-filter" class="encosure-filter" type="number" />
         </div>
     </div>
 

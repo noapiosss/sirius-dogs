@@ -37,9 +37,9 @@ namespace Api.Controllers
             return View(dogs);
         }
 
-        public async Task<IActionResult> Shelter([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Shelter([FromQuery] string searchRequest, string gender, string size, int age, int? row, int? enclosure, int page = 1, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(searchRequest) && filterAge == 0 && filterAge == 0 && filterEnclosure == 0)
+            if (age == 0)
             {
                 GetDogsByWentHomeQueryResult result = await GetDogs(false, page, cancellationToken);
 
@@ -51,7 +51,7 @@ namespace Api.Controllers
             }
             else
             {
-                SearchDogQueryResult result = await Search(searchRequest, filterAge, filterRow, filterEnclosure, page, false, cancellationToken);
+                SearchDogQueryResult result = await Search(searchRequest, gender, size, age, row, enclosure, page, false, cancellationToken);
 
                 ViewBag.DogsCount = result.DogsCount;
                 ViewBag.DogsPerPage = _dogsPerPage;
@@ -61,9 +61,9 @@ namespace Api.Controllers
             }
         }
 
-        public async Task<IActionResult> Home([FromQuery] string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page = 1, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Home([FromQuery] string searchRequest, string gender, string size, int age, int? row, int? enclosure, int page = 1, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(searchRequest) && filterAge == 0 && filterAge == 0 && filterEnclosure == 0)
+            if (age == 0)
             {
                 GetDogsByWentHomeQueryResult result = await GetDogs(true, page, cancellationToken);
 
@@ -75,7 +75,7 @@ namespace Api.Controllers
             }
             else
             {
-                SearchDogQueryResult result = await Search(searchRequest, filterAge, filterRow, filterEnclosure, page, true, cancellationToken);
+                SearchDogQueryResult result = await Search(searchRequest, gender, size, age, row, enclosure, page, true, cancellationToken);
 
                 ViewBag.DogsCount = result.DogsCount;
                 ViewBag.DogsPerPage = _dogsPerPage;
@@ -97,14 +97,16 @@ namespace Api.Controllers
             return await _mediator.Send(query, cancellationToken);
         }
 
-        private async Task<SearchDogQueryResult> Search(string searchRequest, int filterAge, int filterRow, int filterEnclosure, int page, bool wentHome, CancellationToken cancellationToken)
+        private async Task<SearchDogQueryResult> Search(string searchRequest, string gender, string size, int age, int? row, int? enclosure, int page, bool wentHome, CancellationToken cancellationToken)
         {
             SearchDogQuery query = new()
             {
                 SearchRequest = searchRequest,
-                MaxAge = filterAge,
-                Row = filterRow,
-                Enclosure = filterEnclosure,
+                Gender = gender,
+                Size = size,
+                MaxAge = age,
+                Row = row,
+                Enclosure = enclosure,
                 WentHome = wentHome,
                 DogsPerPage = _dogsPerPage,
                 Page = page

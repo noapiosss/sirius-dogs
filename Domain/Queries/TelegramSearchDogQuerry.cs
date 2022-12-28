@@ -42,7 +42,8 @@ namespace Domain.Queries
                     (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
-                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
+                    EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%") ||
+                    EF.Functions.Like(d.Gender.ToLower(), $"%{searchRequest}")))
                 .Include(d => d.Photos)
                 .ToListAsync(cancellationToken);
 

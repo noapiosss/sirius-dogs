@@ -17,9 +17,11 @@ namespace Domain.Queries
     public class SearchDogQuery : IRequest<SearchDogQueryResult>
     {
         public string SearchRequest { get; init; }
+        public string Gender { get; init; }
+        public string Size { get; init; }
         public int MaxAge { get; init; }
-        public int Row { get; init; }
-        public int Enclosure { get; init; }
+        public int? Row { get; init; }
+        public int? Enclosure { get; init; }
         public bool WentHome { get; init; }
         public int DogsPerPage { get; init; }
         public int Page { get; init; }
@@ -49,22 +51,24 @@ namespace Domain.Queries
             int dogsCount = await _dbContext.Doges
                 .Where(d => d.WentHome == request.WentHome &&
                     d.BirthDate.Date >= minBirthDate.Date &&
-                    (request.Row == 0 || d.Row == request.Row) &&
-                    (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
+                    (request.Row == null || d.Row == request.Row) &&
+                    (request.Enclosure == null || d.Enclosure == request.Enclosure) &&
+                    (request.Gender == "Any" || d.Gender == request.Gender) &&
+                    (request.Size == "Any" || d.Size == request.Size) &&
                     (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
-                    EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
                 .CountAsync(cancellationToken);
 
             List<Dog> dogs = await _dbContext.Doges
                 .Where(d => d.WentHome == request.WentHome &&
                     d.BirthDate.Date >= minBirthDate.Date &&
-                    (request.Row == 0 || d.Row == request.Row) &&
-                    (request.Enclosure == 0 || d.Enclosure == request.Enclosure) &&
+                    (request.Row == null || d.Row == request.Row) &&
+                    (request.Enclosure == null || d.Enclosure == request.Enclosure) &&
+                    (request.Gender == "Any" || d.Gender == request.Gender) &&
+                    (request.Size == "Any" || d.Size == request.Size) &&
                     (EF.Functions.Like(d.Name.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.Breed.ToLower(), $"%{searchRequest}%") ||
-                    EF.Functions.Like(d.Size.ToLower(), $"%{searchRequest}%") ||
                     EF.Functions.Like(d.About.ToLower(), $"%{searchRequest}%")))
                 .OrderByDescending(d => d.Id)
                 .Skip((request.Page - 1) * request.DogsPerPage)
