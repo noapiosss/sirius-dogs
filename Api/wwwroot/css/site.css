@@ -237,17 +237,12 @@ html {
   padding: 10px;
 }
 
-.filter-row {
+.filter-gender, .filter-size, .filter-row, .filter-enclosure {
   padding: 10px;
   border-top: solid 1px rgb(224, 224, 224);
 }
 
-.filter-enclosure {
-  padding: 10px;
-  border-top: solid 1px rgb(224, 224, 224);
-}
-
-/* SIGN OUT */
+/* SESSION */
 
 #session-info{
   display: inline-flex;

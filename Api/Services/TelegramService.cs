@@ -49,7 +49,7 @@ public class TelegramService : ITelegramService
                 return;
             }
 
-            if (update.Message.Text.Contains("/echo"))
+            if (update.Message.Text.ToLower().Contains("/echo"))
             {                
                 await _telegramBotClient.SendTextMessageAsync(chatId,
                     update.Message.Text.Split(" ").Length < 2 ? "..." : update.Message.Text.Split(" ", 2)[1],
@@ -58,13 +58,13 @@ public class TelegramService : ITelegramService
                 return;
             }
 
-            if (update.Message.Text.Equals("/ShowAllDogs"))
+            if (update.Message.Text.ToLower().Equals("/showalldogs"))
             {
                 await HandleMessageShowAllDogsAsync(chatId, cancellationToken);
                 return;
             }
 
-            if (update.Message.Text.Contains("/GetDogById"))
+            if (update.Message.Text.ToLower().Contains("/getdogbyid"))
             {
                 if (!int.TryParse(update.Message.Text.Split(" ", 2)[1], out int dogId))
                 {
@@ -88,7 +88,7 @@ public class TelegramService : ITelegramService
                 return;
             }
 
-            if (update.Message.Text.Contains("/Search"))
+            if (update.Message.Text.ToLower().Contains("/Search"))
             {
                 if (update.Message.Text.Split(" ").Length < 2)
                 {
