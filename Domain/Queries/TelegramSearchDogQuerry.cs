@@ -38,6 +38,7 @@ namespace Domain.Queries
             string searchRequest = string.IsNullOrEmpty(request.SearchRequest) ? "" : request.SearchRequest.ToLower();
 
             string gender = searchRequest.Contains("female") ? "Female" : searchRequest.Contains("male") ? "Male" : "Any";
+            searchRequest = searchRequest.Replace(gender.ToLower(), "");
 
             List<Dog> dogs = await _dbContext.Doges
                 .Where(d => !d.WentHome &&
