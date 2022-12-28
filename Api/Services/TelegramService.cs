@@ -91,8 +91,10 @@ public class TelegramService : ITelegramService
 
             if (update.Message.Text.ToLower().Equals("/search"))
             {
-                var message = "To search dogs send message in this format:\n\n" +
-                    "/search {your search request}";
+                var message = "To search the dogs send a message in this format:\n\n" +
+                    "/search your_search_request\n\n" + 
+                    "For example:\n\n" + 
+                    "/search cute small brown female corgi";
 
                 await _telegramBotClient.SendTextMessageAsync(chatId,
                     message,
