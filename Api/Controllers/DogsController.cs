@@ -39,7 +39,7 @@ namespace Api.Controllers
 
         public async Task<IActionResult> Shelter([FromQuery] string searchRequest, string gender, string size, int age, int? row, int? enclosure, int page = 1, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(searchRequest) && age == 0 && row == null && enclosure == null)
+            if (age == 0)
             {
                 GetDogsByWentHomeQueryResult result = await GetDogs(false, page, cancellationToken);
 
@@ -63,7 +63,7 @@ namespace Api.Controllers
 
         public async Task<IActionResult> Home([FromQuery] string searchRequest, string gender, string size, int age, int? row, int? enclosure, int page = 1, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(searchRequest) && age == 0 && row == null && enclosure == null)
+            if (age == 0)
             {
                 GetDogsByWentHomeQueryResult result = await GetDogs(true, page, cancellationToken);
 
