@@ -88,7 +88,7 @@ public class TelegramService : ITelegramService
                 return;
             }
 
-            if (update.Message.Text.ToLower().Contains("/Search"))
+            if (update.Message.Text.ToLower().Contains("/search"))
             {
                 if (update.Message.Text.Split(" ").Length < 2)
                 {
@@ -188,6 +188,7 @@ public class TelegramService : ITelegramService
     {
         return $"*Name:* {dog.Name}\n" +
             $"*Breed:* {dog.Breed}\n" +
+            $"*Breed:* {dog.Gender}" +
             $"*Size:* {dog.Size}\n" +
             $"*Age:* {GetAge(dog.BirthDate)}\n" +
             $"*About:* {dog.About}\n" +
